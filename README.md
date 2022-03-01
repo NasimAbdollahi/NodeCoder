@@ -15,7 +15,7 @@ to a Graph Convolutional Network (GCN), which annotates specific regions of inte
 including their local neighbors. We demonstrate the approach using six varied amino acid classification tasks.
 ```
 
-<img src="/Figures/NodeCoder_pipeline.png" width="400"/>
+<img src="/Figures/NodeCoder_pipeline.png" width="700"/>
 
 
 ### Citing
