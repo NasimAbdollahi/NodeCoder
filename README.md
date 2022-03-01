@@ -229,7 +229,7 @@ The main contributors are:  <br />
 
 <a name="u8"></a>
 ### 8. License
-MIT Licence??? 
+MIT Licence 
 
 
 [comment]: <> (colors = ['#CC79A7', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#000000'])
