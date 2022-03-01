@@ -5,7 +5,15 @@ This work was presented at **NeurIPS MLSB 2021**: *Residue characterization on A
 
 ## Abstract:
 ```
-Three-dimensional structure prediction tools offer a rapid means to approximate the topology of a protein structure for any protein sequence. Recent progress in deep learning-based structure prediction has led to highly accurate predictions that have recently been used to systematically predict 20 whole proteomes by DeepMind’s AlphaFold and the EMBL-EBI. While highly convenient, structure prediction tools lack much of the functional context presented by experimental studies, such as binding sites or post-translational modifications. Here, we introduce a machine learning framework to rapidly model any residue-based classification using AlphaFold2 structure-augmented protein representations. Specifically, graphs describing the 3D structure of each protein in the AlphaFold2 human proteome are generated and used as input representations to a Graph Convolutional Network (GCN), which annotates specific regions of interest based on the structural attributes of the amino acid residues, including their local neighbors. We demonstrate the approach using six varied amino acid classification tasks.
+Three-dimensional structure prediction tools offer a rapid means to approximate the topology of a protein structure for any protein
+sequence. Recent progress in deep learning-based structure prediction has led to highly accurate predictions that have recently been
+used to systematically predict 20 whole proteomes by DeepMind’s AlphaFold and the EMBL-EBI. While highly convenient, structure
+prediction tools lack much of the functional context presented by experimental studies, such as binding sites or post-translational
+modifications. Here, we introduce a machine learning framework to rapidly model any residue-based classification using AlphaFold2
+structure-augmented protein representations. Specifically, graphs describing the 3D structure of each protein in the AlphaFold2
+human proteome are generated and used as input representations to a Graph Convolutional Network (GCN), which annotates specific
+regions of interest based on the structural attributes of the amino acid residues, including their local neighbors. We demonstrate
+the approach using six varied amino acid classification tasks.
 ```
 
 ![](/Figures/NodeCoder_Pipeline.png)
