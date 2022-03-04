@@ -16,7 +16,7 @@ each protein in the AlphaFold2 human proteome are generated and used as input re
 local neighbors. We demonstrate the approach using six varied amino acid classification tasks.
 ```
 
-<img src="/Figures/NodeCoder_Pipeline.png" width = "1070">
+<img src="/figures/NodeCoder_Pipeline.png" width = "1070">
 
 
 ### Citing

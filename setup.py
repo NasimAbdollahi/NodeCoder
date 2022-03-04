@@ -22,9 +22,9 @@ VERSION = '1.0.0'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-     "scipy>=1.5.4", "numpy>=1.19.2", "pandas>=1.1.5", "pytorch>=1.7.0", "torch>=0.4.1",
-     "torch-geometric>=1.6.3", "torch_sparse>=0.6.8", "torch_scatter>=2.0.5", "torch_cluster>=1.5.8",
-     "torch_spline_conv>=1.2.0", "torchvision>=0.8.1", "torchaudio>=0.7.0", "scikit-learn>=0.23.2",
+     #"scipy>=1.5.4", "numpy>=1.19.2", "pandas>=1.1.5", "pytorch>=1.7.0", "torch>=0.4.1",
+     #"torch-geometric>=1.6.3", "torch_sparse>=0.6.8", "torch_scatter>=2.0.5", "torch_cluster>=1.5.8",
+     #"torch_spline_conv>=1.2.0", "torchvision>=0.8.1", "torchaudio>=0.7.0", "scikit-learn>=0.23.2",
              ]
 # What packages are optional?
 EXTRAS = {
@@ -104,15 +104,15 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
+    packages=find_packages('NodeCoder'),
+    package_dir={'': 'NodeCoder'},
     # packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of 'packages':
     #py_modules=['NodeCoder'],
 
-    # entry_points={
-    #     'console_scripts': ['mycli=mymodule:cli'],
-    # },
+    entry_points={
+         'console_scripts': ['NodeCoder-cli=NodeCoder.main:main'],
+     },
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
