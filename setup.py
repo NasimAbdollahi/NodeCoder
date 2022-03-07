@@ -23,9 +23,10 @@ VERSION = '1.0.0'
 # What packages are required for this module to be executed?
 REQUIRED = [
      "scipy>=1.5.4", "numpy>=1.19.2", "pandas>=1.1.5", "matplotlib>=3.3.3",
-     # "pytorch>=1.7.0", "torch>=0.4.1",
-     #"torch-geometric>=1.6.3", "torch_sparse>=0.6.8", "torch_scatter>=2.0.5", "torch_cluster>=1.5.8",
-     #"torch_spline_conv>=1.2.0", "torchvision>=0.8.1", "torchaudio>=0.7.0", "scikit-learn>=0.23.2",
+     "torch>=0.4.1", "torchvision>=0.8.1", "torchaudio>=0.7.0"
+     "torch_scatter>=2.0.5", "torch_sparse>=0.6.8", "torch_cluster>=1.5.8", 
+     "torch_spline_conv>=1.2.0", "torch-geometric>=1.6.3", 
+     "scikit-learn>=0.23.2", "matplotlib>=3.3.3", "texttable>=1.6.3"
              ]
 # What packages are optional?
 EXTRAS = {

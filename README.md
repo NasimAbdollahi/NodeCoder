@@ -44,6 +44,7 @@ local neighbors. We demonstrate the approach using six varied amino acid classif
 7. [ Collaborators ](#u7)
 8. [ License ](#u8)
 
+---
 
 <a name="u1"></a>
 ### 1. What does the NodeCoder Pipeline do?

@@ -2,3 +2,61 @@
 .DS_store
 .idea
 
+ 
+# Ignore node_modules folder
+node_modules
+ 
+# Ignore all text files
+*.txt
+ 
+# Ignore files related to API keys
+.env
+ 
+# Ignore SASS config files
+.sass-cache
+
+# Byte-compiled / optimized / DLL files
+NodeCoder/__pycache__/*
+__pycache__/
+
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Translations
+*.mo
+
+
+# Rope
+.ropeproject
+
+# Django stuff:
+*.log
+*.pot
