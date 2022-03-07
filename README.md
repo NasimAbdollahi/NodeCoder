@@ -117,7 +117,9 @@ When graph data is generated from raw data, files are saved in this directory <f
 Specific sub-directories are created depends on user choice of cutoff distance for protein contact network. This helps user 
 to keep track of different test cases.
 
-Generated graph data files includes:
+<details open>
+<summary> Generated graph data files includes: </summary>
+<br>
 
 #### *_features.csv  <br />
 Nodes' feature vectors are concatenated to create a long list of features for all nodes in the graph.
@@ -191,6 +193,8 @@ Amino Acid Residue (AA) feature vector:
 | 43 | feat_CentricCosineDist | Cosine distance of AA residue from the center of protein |
 | 44 | feat_iPlus | AA info of a node before node i in protein sequence |
 | 45 | feat_iMinus | AA info of a node after node i in protein sequence |
+
+</details>
 
 <a name="u6"></a>
 ### 6. Output file

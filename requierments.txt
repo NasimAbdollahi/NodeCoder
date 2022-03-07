@@ -1,0 +1,16 @@
+# the default package dependencies
+
+scipy>=1.5.4
+numpy>=1.19.2
+pandas>=1.1.5
+scikit-learn>=0.23.2
+pytorch>=1.7.0
+torch>=0.4.1
+torchvision>=0.8.1
+torchaudio>=0.7.0
+torch_sparse>=0.6.8
+torch_scatter>=2.0.5
+torch_cluster>=1.5.8
+torch_spline_conv>=1.2.0
+torch-geometric>=1.6.3
+matplotlib>=3.3.3
