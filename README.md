@@ -65,15 +65,17 @@ The codebase is implemented in Python 3.8 and package versions used for developm
 numpy              1.19.2
 pandas             1.2.4
 scipy              1.6.3
-scikit-learn       0.24.2
-pytorch            1.8.1
 torch              0.4.1
-torch-geometric    1.7.0        
-torch_sparse       0.6.9
-torch_scatter      2.0.6
-torch_cluster      1.5.9
 torchvision        0.9.1
-torchvision        0.8.1
+torchaudio         0.8.1
+torch_scatter      2.0.6
+torch_sparse       0.6.9
+torch_cluster      1.5.9
+torch_spline_conv  1.2.0
+torch-geometric    1.7.0  
+scikit-learn       0.24.2
+matplotlib         3.3.3
+
 ```
 
 Command line to train NodeCoder:
