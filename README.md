@@ -1,4 +1,8 @@
-# NodeCoder Pipeline
+<!-- # NodeCoder Pipeline -->
+
+<img src="/Figures/Nodecoder_banner.png" width = "1070">
+
+![APM](https://img.shields.io/apm/l/NodeCoder?style=plastic)
 
 A PyTorch implementation of **NodeCoder Pipeline**, a Graph Convolutional Network (GCN) model for protein residue characterization. 
 This work was presented at **NeurIPS MLSB 2021**: *Residue characterization on AlphaFold2 protein structures using graph neural networks*. [link to the paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
