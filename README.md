@@ -39,11 +39,15 @@ local neighbors. We demonstrate the approach using six varied amino acid classif
 ### 🧬 What does the NodeCoder Pipeline do? 
 
 ---
-The NodeCoder Pipeline is a generalized framework that annotates 3D protein structures with predicted tasks such as binding sites.
-It takes the **Protein ID** like **EGFR_HUMAN** and for the proteins that are already in the database, input graph data files are
-created from the AlphaFold2 protein structure in addition to calculating some structure-based and sequence-based residue features.
-The input graph data will then be given to the trained model for prediction of multiple tasks of interest such as binding
-sites or post-translational modifications.
+The NodeCoder Pipeline is a generalized framework that annotates 3D protein structures with predicted tasks such as 
+binding sites. The NodeCoder model is based on Graph Convolutional Network. NodeCoder generates proteins' graphs from 
+ALphaFold2 augmented proteins' structures where the nodes are the amino acid residues and edges are inter-residue 
+contacts within a preset distance. The NodeCoder model is then trained with generated graph data for users task of 
+interest like: `Task = ['y_Ligand']`. 
+When running inference, NodeCoder takes the **Protein ID** like **EGFR_HUMAN** and for the proteins that are already in 
+the database, input graph data files are created from the AlphaFold2 protein structure in addition to calculating some 
+structure-based and sequence-based residue features. The input graph data will then be given to the trained model for 
+prediction of multiple tasks of interest such as binding sites or post-translational modifications.
 
 <a name="u2"></a>
 ### ⚙️ Installing NodeCoder 
