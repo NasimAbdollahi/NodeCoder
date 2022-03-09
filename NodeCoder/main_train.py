@@ -94,6 +94,7 @@ def main():
     print(colors.HEADER + "\n--- Inference completed. ---" + colors.ENDC)
     print(colors.HEADER + "\n--- Calculating and writing prediction scores per protein ... " + colors.ENDC)
     csv_writer_prediction(Task, inference.validation_targets, inference.validation_predictions, inference.validation_predictions_prob, args.validation_node_proteinID_path[i], args.Prediction_fileName[i])
+    print(colors.HEADER + "\n--- Model is successfully trained and prediction scores are saved! --- " + colors.ENDC)
 
   plot_performance_metrics(args)
 

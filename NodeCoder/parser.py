@@ -18,19 +18,19 @@ def parameter_parser(Task, NodeCoder_usage:str='predict', protein_ID:str='NA', p
     parser.set_defaults(threshold_dist=threshold_dist)
     parser.add_argument("--cross-validation-fold-number",
                         type=int,
-                        default=4,
+                        default=3,
                         help="Number of folds for cross-validation.")
 
 
     args = parser.parse_args()
     parser.add_argument("--path-raw-data",
                         nargs="?",
-                        default="./input_data/AlphaFold2_2021Data_RawData/2021-12/",
+                        default="./data/AlphaFold2_2021Data_RawData/2021-12/",
                         help="GraphData Path.")
     parser.set_defaults(KnownProteins_filename='KnownProteinFiles.csv')
     parser.add_argument("--path-graph-data",
                         nargs="?",
-                        default="./input_data/AlphaFold2_2021Data_GraphData_%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
+                        default="./data/AlphaFold2_2021Data_GraphData_%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
                         help="GraphData Path.")
     parser.add_argument("--path-results",
                         nargs="?",

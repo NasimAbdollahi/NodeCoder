@@ -86,9 +86,9 @@ def main():
         PredictedProb.append(list(predictor.predictions_prob))
 
     """ Writing predicted and target labels """
+    print(colors.HEADER + "\n--- Writing predicted labels ... " + colors.ENDC)
     csv_writer_prediction(Task, TrueLabel, PredictedLabel, PredictedProb, args.protein_node_proteinID_path, args.protein_prediction_fileName)
-
+    print(colors.HEADER + "\n--- Prediction is successfully completed! --- " + colors.ENDC)
 
 if __name__ == "__main__":
-    main()
     main()

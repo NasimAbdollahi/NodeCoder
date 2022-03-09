@@ -1,6 +1,6 @@
 <!-- # NodeCoder Pipeline -->
 
-<img src="/Figures/Nodecoder_banner.png" width = "1070">
+<img src="/figures/Nodecoder_banner.png" width = "1070">
 
 ![APM](https://img.shields.io/apm/l/NodeCoder?style=plastic) ![GitHub package.json version](https://img.shields.io/github/package-json/v/NasimAbdollahi/NodeCoder)
 ![GitHub file size in bytes](https://img.shields.io/github/size/:NasimAbdollahi/:NodeCoder?style=plastic)
@@ -22,38 +22,23 @@ each protein in the AlphaFold2 human proteome are generated and used as input re
 local neighbors. We demonstrate the approach using six varied amino acid classification tasks.
 ```
 
-<img src="/Figures/NodeCoder_Pipeline.png" width = "1070">
+<img src="/figures/NodeCoder_Pipeline.png" width = "1070">
 
-
-### Citing
-```
-@article {2021,
-	author = {Abdollahi, Nasim and Madani, Ali and Wang, Bo and MacKinnon,
-	Stephen},
-	title = {Residue characterization on AlphaFold2 protein structures using graph neural networks},
-	year = {2021},
-	doi = {},
-	publisher = {NeurIPS},
-	URL = {https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf},
-	journal = {NeurIPS, MLSB}
-}
-
-```
 
 ## Table of Contents
-1. [ What does the NodeCoder Pipeline do? ](#u1)
-2. [ Required dependencies ](#u2)
-3. [ Train NodeCoder ](#u3)
-4. [ Predict with NodeCoder (Inference) ](#u4)
-5. [ Graph data files ](#u5)
-6. [ Output file ](#u6)
-7. [ Collaborators ](#u7)
-8. [ License ](#u8)
-
----
+🧬 [ What does the NodeCoder Pipeline do? ](#u1)<br>
+⚙️ [ Installing NodeCoder ](#u2)<br>
+🔌 [ NodeCoder Usage ](#u3)<br>
+🗄️ [ Graph data files ](#u4)<br> 
+📂 [ Output file ](#u5)<br>
+🤝 [ Collaborators ](#u6)<br>
+🔐 [ License ](#u7)<br>
+📄 [ Citing this work ](#u8)
 
 <a name="u1"></a>
-### 1. What does the NodeCoder Pipeline do?
+### 🧬 What does the NodeCoder Pipeline do? 
+
+---
 The NodeCoder Pipeline is a generalized framework that annotates 3D protein structures with predicted tasks such as binding sites.
 It takes the **Protein ID** like **EGFR_HUMAN** and for the proteins that are already in the database, input graph data files are
 created from the AlphaFold2 protein structure in addition to calculating some structure-based and sequence-based residue features.
@@ -61,7 +46,10 @@ The input graph data will then be given to the trained model for prediction of m
 sites or post-translational modifications.
 
 <a name="u2"></a>
-### 2. Required dependencies
+### ⚙️ Installing NodeCoder 
+
+---
+#### Required dependencies
 The codebase is implemented in Python 3.8 and package versions used for development are:
 ```
 numpy              1.19.2
@@ -77,20 +65,33 @@ torch_spline_conv  1.2.0
 torch-geometric    1.7.0  
 scikit-learn       0.24.2
 matplotlib         3.3.3
-
+```
+#### Installation steps
+Here is the step-by-step NodeCoder installation process:
+1. First create a conda environment with python 3.8. Assuming you have anaconda3 installed on your computer, on your 
+Terminal run the following command line:
+```
+$ conda create -n NodeCoder_env python=3.8
+```
+2. Go to directory where the NodeCoder package is saved and activate the conda environment:
+```
+$ cd ~/NodeCoder
+$ conda activate NodeCoder_env
 ```
 
-Command line to train NodeCoder:
+3. Now install NodeCoder package. The following command line will install all dependecies in the conda environment you 
+created in step 1: 
 ```
-$ python main_train.py
-```
-Command line to run inference with NodeCoder:
-```
-$ python main_predict.py
+$ pip install.
 ```
 
 <a name="u3"></a>
-### 3. Train NodeCoder
+### 🔌 NodeCoder Usage
+
+---
+NodeCoder package can be employed for train and inference. Here we describe how to use it:
+
+#### 🧠 Train NodeCoder
 To train NodeCoder's graph-based model, user needs to run `main_train.py` script.
 Script `parser.py` has the model parameters used for training the model.
 User would need to use the following parameters in `main_train.py` script to specify the task/tasks of interest and the
@@ -98,6 +99,10 @@ cutoff distance for defining the protein contact network:
 ``` 
 Task = ['y_Ligand']
 threshold_dist = 5
+```
+Command line to train NodeCoder:
+```
+$ python NodeCoder/main_train.py
 ```
 
 Here is a list of available training tasks (residue labels/annotations) :
@@ -107,8 +112,7 @@ Here is a list of available training tasks (residue labels/annotations) :
 'y_Peptide', 'y_Nucleic', 'y_Inorganic', 'y_Cofactor', 'y_Ligand'
 ```
 
-<a name="u4"></a>
-### 4. Predict with NodeCoder (Inference)
+### 🤖 Predict with NodeCoder (Inference)
 To use trained NodeCoder for protein functions prediction, user needs to run `main_predict.py` script.
 User would need to use the following parameters in `main_predict.py` script to specify the protein of interest, functions
 of interest and the cutoff distance for defining the protein contact network:
@@ -116,13 +120,19 @@ of interest and the cutoff distance for defining the protein contact network:
 Task = ['y_Ligand']
 threshold_dist = 5
 ```
+Command line to run inference with NodeCoder:
+```
+$ python NodeCoder/main_predict.py
+```
 The user shall make sure the model with the desired parameters should have been trained already, otherwise the user would
 need to first train the model then use this pipeline for prediction.
 
 
-<a name="u5"></a>
-### 5. Graph data files
-When graph data is generated from raw data, files are saved in this directory <font color='#D55E00'> ./input_data/ </font>. 
+<a name="u4"></a>
+### 🗄️ Graph data files
+
+---
+When graph data is generated from raw data, files are saved in this directory <font color='#D55E00'> ./data/ </font>. 
 Specific sub-directories are created depends on user choice of cutoff distance for protein contact network. This helps user 
 to keep track of different test cases.
 
@@ -205,26 +215,27 @@ Amino Acid Residue (AA) feature vector:
 
 </details>
 
-<a name="u6"></a>
-### 6. Output file
+<a name="u5"></a>
+### 📂 Output file
+
+---
 All output files are saved in this directory <font color='#D55E00'> ./results/ </font>. Specific sub-directories are created
 according to model parameters, so that user can keep track of different test cases.
 
-#### Training NodeCoder
-When training NodeCoder, in a cross-validation setting, the performance scores are saved in a .csv file like 
+#### When training NodeCoder
+In a cross-validation setting, the performance scores are saved in a .csv file like 
 <font color='#D55E00'> Model_Performance_Metrics_Fold1.csv </font>, for all folds. In addition to this, model state is also saved 
 in <font color='#D55E00'> CheckPoints </font> sub-directory at certain epochs. The checkpoint epoch can be specified in `parser.py`.
 At the end of training on each fold, the inference is performed by finding the optimum epoch and loading corresponding 
 trained model at the optimum epoch. At the end of inference, an output file is saved in <font color='#D55E00'> Prediction </font> 
 sub-directory that includes the predicted labels for all proteins in validation set. This can be useful for ranking proteins.
 
-#### Predicting with NodeCoder
-When predicting protein functions with trained NodeCoder, the prediction results are saved in a sub-directory with protein name. 
+#### When predicting with NodeCoder
+When running inference with trained NodeCoder, the prediction results are saved in a sub-directory with protein name. 
 The prediction result is a csv file like <font color='#D55E00'> KI3L1_HUMAN_prediction_3Tasks_results.csv </font>, which is a dataframe 
 that contains the target labels, predicted labels and prediction probability of the labels per node (AA residue) for all 
 tasks of interest, {y1, y2, ..., yn}.
 
-[comment]: <> (The node features could also be added in this file for easy access  and further analysis.)
 
 | node_id | protein_id_flag | protein_id | Task 1 Target| Task 1 Prediction | Task 1 PredictionProb | ... | Task n Target | Task n Prediction | Task n PredictionProb |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -232,8 +243,10 @@ tasks of interest, {y1, y2, ..., yn}.
 | 1 | 0 | E2F8_HUMAN | 0/1 | 0/1 | float |  | 0/1 | 0/1 | float |
 
 
-<a name="u7"></a>
-### 7. Collaborators
+<a name="u6"></a>
+### 🤝 Collaborators
+
+---
 This project has been sponsored by [Mitacs](https://www.mitacs.ca/en) and [Cyclica Inc.](https://www.cyclicarx.com/).  <br />
 The main contributors are:  <br />
 **Nasim Abdollahi**, Ph.D., Post-doctoral Fellow at University of Toronto, Cyclica Inc. <br />
@@ -241,9 +254,22 @@ The main contributors are:  <br />
 **Bo Wang**, Ph.D., Canada CIFAR AI Chair at the Vector Institute, Professor at University of Toronto <br />
 **Stephen MacKinnon**, Ph.D., Chief Platform Officer at Cyclica Inc. <br />
 
-<a name="u8"></a>
-### 8. License
+<a name="u7"></a>
+### 🔐 License
 MIT Licence 
 
-
+<a name="u8"></a>
+### 📄 Citing this work
+```
+@article {2021,
+	author = {Abdollahi, Nasim and Madani, Ali and Wang, Bo and MacKinnon,
+	Stephen},
+	title = {Residue characterization on AlphaFold2 protein structures using graph neural networks},
+	year = {2021},
+	doi = {},
+	publisher = {NeurIPS},
+	URL = {https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf},
+	journal = {NeurIPS, MLSB}
+}
+```
 [comment]: <> (colors = ['#CC79A7', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#000000'])
