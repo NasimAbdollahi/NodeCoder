@@ -112,7 +112,7 @@ Here is a list of available training tasks (residue labels/annotations) :
 'y_Peptide', 'y_Nucleic', 'y_Inorganic', 'y_Cofactor', 'y_Ligand'
 ```
 
-### 🤖 Predict with NodeCoder (Inference)
+#### 🤖 Inference with NodeCoder
 To use trained NodeCoder for protein functions prediction, user needs to run `main_predict.py` script.
 User would need to use the following parameters in `main_predict.py` script to specify the protein of interest, functions
 of interest and the cutoff distance for defining the protein contact network:
