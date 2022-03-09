@@ -30,7 +30,7 @@ local neighbors. We demonstrate the approach using six varied amino acid classif
 ⚙️ [ Installing NodeCoder ](#u2)<br>
 🔌 [ NodeCoder Usage ](#u3)<br>
 🗄️ [ Graph data files ](#u4)<br> 
-📂 [ Output file ](#u5)<br>
+📂 [ Output files ](#u5)<br>
 🤝 [ Collaborators ](#u6)<br>
 🔐 [ License ](#u7)<br>
 📄 [ Citing this work ](#u8)
@@ -82,7 +82,7 @@ $ conda activate NodeCoder_env
 3. Now install NodeCoder package. The following command line will install all dependecies in the conda environment you 
 created in step 1: 
 ```
-$ pip install.
+$ pip install .
 ```
 
 <a name="u3"></a>
@@ -216,7 +216,7 @@ Amino Acid Residue (AA) feature vector:
 </details>
 
 <a name="u5"></a>
-### 📂 Output file
+### 📂 Output files
 
 ---
 All output files are saved in this directory <font color='#D55E00'> ./results/ </font>. Specific sub-directories are created
