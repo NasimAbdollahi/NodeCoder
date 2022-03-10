@@ -87,8 +87,9 @@ $ git clone https://github.com/NasimAbdollahi/NodeCoder.git
 $ conda activate NodeCoder_env
 ```
 
-3. Make sure you are in the root directory (same as setup.py). Now install NodeCoder package with following command line 
-This will install all dependencies in the python environment you created in step 1:
+3. Make sure you are in the root directory of the NodeCoder package `~/NodeCoder/` (where setup.py is). 
+Now install NodeCoder package with following command line, which will install all dependencies in the python environment
+you created in step 1:
 ```
 $ pip install .
 ```
