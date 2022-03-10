@@ -82,7 +82,7 @@ $ conda create -n NodeCoder_env python=3.8
 ```
 $ git clone https://github.com/NasimAbdollahi/NodeCoder.git
 ```
-3. Make sure your virtual environment is active, 
+3. Make sure your virtual environment is active. For conda environment you can use this command line: 
 ```
 $ conda activate NodeCoder_env
 ```
