@@ -82,14 +82,13 @@ $ conda create -n NodeCoder_env python=3.8
 ```
 $ git clone https://github.com/NasimAbdollahi/NodeCoder.git
 ```
-3. Make sure your virtual environment is active, and you are in NodeCoder directory, or directory that you chose to save
-the package:
+3. Make sure your virtual environment is active, 
 ```
-$ cd ~/NodeCoder
 $ conda activate NodeCoder_env
 ```
-3. Now install NodeCoder package. The following command line will install all dependecies in the environment you created 
-in step 1:
+
+3. Make sure you are in the root directory (same as setup.py). Now install NodeCoder package with following command line 
+This will install all dependencies in the python environment you created in step 1:
 ```
 $ pip install .
 ```
