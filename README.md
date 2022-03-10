@@ -81,7 +81,6 @@ $ conda create -n NodeCoder_env python=3.8
 2. Clone the repository:
 ```
 $ git clone https://github.com/NasimAbdollahi/NodeCoder.git
-$ pip install https://github.com/NasimAbdollahi/NodeCoder/releases/download/v${VERSION}/NodeCoder-${VERSION}+${CUDA}-cp38-cp38-${OS}.whl
 ```
 3. Make sure your virtual environment is active, and you are in NodeCoder directory, or directory that you chose to save
 the package:
