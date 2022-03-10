@@ -72,19 +72,25 @@ matplotlib         3.3.3
 ```
 #### Installation steps
 Here is the step-by-step NodeCoder installation process:
-1. First create a conda environment with python 3.8. Assuming you have anaconda3 installed on your computer, on your 
+1. Before installing NodeCoder, we highly recommend to create a virutal Python 3.8 environment using venv command, 
+or Anaconda. Assuming you have anaconda3 installed on your computer, on your 
 Terminal run the following command line:
 ```
 $ conda create -n NodeCoder_env python=3.8
 ```
-2. Go to directory where the NodeCoder package is saved and activate the conda environment:
+2. Clone the repository:
+```
+$ git clone https://github.com/NasimAbdollahi/NodeCoder.git
+$ pip install https://github.com/NasimAbdollahi/NodeCoder/releases/download/v${VERSION}/NodeCoder-${VERSION}+${CUDA}-cp38-cp38-${OS}.whl
+```
+3. Make sure your virtual environment is active, and you are in NodeCoder directory, or directory that you chose to save
+the package:
 ```
 $ cd ~/NodeCoder
 $ conda activate NodeCoder_env
 ```
-
-3. Now install NodeCoder package. The following command line will install all dependecies in the conda environment you 
-created in step 1: 
+3. Now install NodeCoder package. The following command line will install all dependecies in the environment you created 
+in step 1:
 ```
 $ pip install .
 ```
