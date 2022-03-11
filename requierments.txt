@@ -14,3 +14,6 @@ torch_cluster>=1.5.8
 torch_spline_conv>=1.2.0
 torch-geometric>=1.6.3
 matplotlib>=3.3.3
+biopython>=1.77
+freesasa==2.0.5.post2
+loguru>=0.6.0
