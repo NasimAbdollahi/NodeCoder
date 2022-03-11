@@ -49,7 +49,7 @@ the database, input graph data files are created from the AlphaFold2 protein str
 structure-based and sequence-based residue features. The input graph data will then be given to the trained model for 
 prediction of multiple tasks of interest such as binding sites or post-translational modifications.
 
-<img src="/figures/NodeCoder_FunctionBlocks.png" width = "1000">
+<img src="/figures/NodeCoder_FunctionBlocks.png" width = "950">
 
 <a name="u2"></a>
 ### ⚙️ Installing NodeCoder 
