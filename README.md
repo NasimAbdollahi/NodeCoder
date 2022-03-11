@@ -71,7 +71,7 @@ torch_spline_conv  1.2.0
 torch-geometric    1.7.0  
 scikit-learn       0.24.2
 matplotlib         3.3.3
-biopython		   1.77
+biopython          1.77
 freesasa           2.0.5.post2
 loguru             0.6.0
 ```
