@@ -26,7 +26,7 @@ REQUIRED = [
      "torch>=0.4.1", "torchvision==0.8.1", "torchaudio==0.7.0",
      "torch_scatter==2.0.5", "torch_sparse==0.6.8", "torch_cluster==1.5.8", 
      "torch_spline_conv==1.2.0", "torch-geometric==1.6.3", 
-     "scikit-learn>=0.23.2", "texttable>=1.6.3"
+     "scikit-learn>=0.23.2", "texttable>=1.6.3", "biopython>=1.77", "freesasa==2.0.5.post2", "loguru>=0.6.0"
              ]
 # What packages are optional?
 EXTRAS = {
