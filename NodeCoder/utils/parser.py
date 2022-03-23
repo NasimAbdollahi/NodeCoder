@@ -1,6 +1,7 @@
 import argparse
 
-def parameter_parser(Task, NodeCoder_usage:str='predict', protein_ID:str='NA', protein_fold_number:int=0, threshold_dist:int=5, multi_task_learning:str='No'):
+def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
+                     protein_ID:str='NA', protein_fold_number:int=0, threshold_dist:int=5, multi_task_learning:str='No'):
     """
     A method to parse up command line parameters. By default it trains on the PubMed dataset.
     The default hyperparameters give a good quality representation without grid search.
@@ -8,40 +9,65 @@ def parameter_parser(Task, NodeCoder_usage:str='predict', protein_ID:str='NA', p
     parser = argparse.ArgumentParser(description="Run .")
 
     parser.set_defaults(NodeCoder_usage=NodeCoder_usage)
-    parser.set_defaults(multi_task_learning=multi_task_learning)
-    parser.set_defaults(protein_ID=protein_ID)
-    parser.set_defaults(protein_fold_number=protein_fold_number)
-    parser.set_defaults(graph_data_targets_name=['y_CHAIN', 'y_TRANSMEM', 'y_MOD_RES',
-                                     'y_ACT_SITE', 'y_NP_BIND', 'y_LIPID', 'y_CARBOHYD', 'y_DISULFID',
-                                     'y_VARIANT', 'y_Artifact', 'y_Peptide', 'y_Nucleic', 'y_Inorganic',
-                                     'y_Cofactor', 'y_Ligand'])
+
+    parser.set_defaults(TAX_ID='9606')
+    parser.set_defaults(PROTEOME_ID='UP000005640')
+    parser.add_argument("--path-raw-data",
+                        nargs="?",
+                        default="./data/raw_data/",
+                        help="Raw Data Path.")
+    parser.add_argument("--path-raw-data-AlphaFold",
+                        nargs="?",
+                        default="./data/raw_data/alphafold/20210722/%s_%s/"%(PROTEOME_ID, TAX_ID),
+                        help="Raw Data Path (AlphaFold).")
+    parser.add_argument("--path-raw-data-uniprot",
+                        nargs="?",
+                        default="./data/raw_data/uniprot_proteomes/20200917/uniprot.%s.%s.2020-09-15.txt.gz"%(TAX_ID, PROTEOME_ID),
+                        help="Raw Data Path (UniProt).")
+    parser.add_argument("--path-raw-data-BioLiP",
+                        nargs="?",
+                        default="./data/raw_data/BioLiP/all_annotations.tsv",
+                        help="Raw Data Path (BioLiP).")
+    parser.add_argument("--path-raw-data-BioLiP-skip",
+                        nargs="?",
+                        default="./data/raw_data/BioLiP/ligand_list.txt",
+                        help="Raw Data Path (BioLiP - SKIP).")
+    parser.add_argument("--path-featurized-data-tasks",
+                        nargs="?",
+                        default="./data/input_data/featurized_data/%s/tasks/"%TAX_ID,
+                        help="Featurized Data Path (tasks).")
+    parser.add_argument("--path-featurized-data-features",
+                        nargs="?",
+                        default="./data/input_data/featurized_data/%s/features/"%TAX_ID,
+                        help="Featurized Data Path (Features).")
+
     parser.set_defaults(threshold_dist=threshold_dist)
     parser.add_argument("--cross-validation-fold-number",
                         type=int,
                         default=3,
                         help="Number of folds for cross-validation.")
-
-
     args = parser.parse_args()
-    parser.add_argument("--path-raw-data",
-                        nargs="?",
-                        default="./data/AlphaFold2_2021Data_RawData/2021-12/",
-                        help="GraphData Path.")
     parser.set_defaults(KnownProteins_filename='KnownProteinFiles.csv')
     parser.add_argument("--path-graph-data",
                         nargs="?",
-                        default="./data/AlphaFold2_2021Data_GraphData_%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
+                        default="./data/input_data/graph_data_%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
                         help="GraphData Path.")
     parser.add_argument("--path-results",
                         nargs="?",
-                        default="./results/AlphaFold2_2021Data_Graph%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
+                        default="./results/graph_%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
                         help="Results Path.")
     parser.add_argument("--path-protein-results",
                         nargs="?",
-                        default="./results/AlphaFold2_2021Data_Graph%sA/%sFoldCV/%s/" %(threshold_dist, args.cross_validation_fold_number,protein_ID),
+                        default="./results/graph_%sA/%sFoldCV/%s/" %(threshold_dist, args.cross_validation_fold_number,protein_ID),
                         help="Protein Results Path.")
 
-
+    parser.set_defaults(multi_task_learning=multi_task_learning)
+    parser.set_defaults(protein_ID=protein_ID)
+    parser.set_defaults(protein_fold_number=protein_fold_number)
+    parser.set_defaults(graph_data_targets_name=['y_CHAIN', 'y_TRANSMEM', 'y_MOD_RES',
+                                                 'y_ACT_SITE', 'y_NP_BIND', 'y_LIPID', 'y_CARBOHYD', 'y_DISULFID',
+                                                 'y_VARIANT', 'y_Artifact', 'y_Peptide', 'y_Nucleic', 'y_Inorganic',
+                                                 'y_Cofactor', 'y_Ligand'])
     parser.set_defaults(target_name=Task)
     parser.set_defaults(includeEdgeFeature='Yes')
     parser.set_defaults(downSampling_majority_class='No')

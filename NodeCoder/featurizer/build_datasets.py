@@ -1,9 +1,9 @@
 import tqdm
 from loguru import logger
 from multiprocessing import Pool, cpu_count
-import protein_features
-import protein_tasks
-import protein_sequences
+import featurizer.protein_features as protein_features 
+import featurizer.protein_tasks as protein_features 
+import featurizer.protein_sequences as protein_features 
 import os
 
 
