@@ -48,10 +48,10 @@ class Graph_Data_Generator(object):
                             node_num.append(protein_frame.shape[0])
                         else:
                             missing_features_files.append(protein_files[i].replace('tasks', 'features'))
-            csv_writter_known_proteins(known_protein_files, node_num, self.args.path_raw_data, self.args.KnownProteins_filename)
-            known_proteins = pd.read_csv(self.args.path_raw_data+self.args.KnownProteins_filename)
+            csv_writter_known_proteins(known_protein_files, node_num, self.args.path_featurized_data, self.args.KnownProteins_filename)
+            known_proteins = pd.read_csv(self.args.path_featurized_data+self.args.KnownProteins_filename)
         else:
-            known_proteins = pd.read_csv(self.args.path_raw_data+self.args.KnownProteins_filename)
+            known_proteins = pd.read_csv(self.args.path_featurized_data+self.args.KnownProteins_filename)
         return known_proteins
 
     def grouping_proteins_for_train_validation_folds(self):

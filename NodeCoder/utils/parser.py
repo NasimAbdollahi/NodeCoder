@@ -32,6 +32,10 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         nargs="?",
                         default="./data/raw_data/BioLiP/ligand_list.txt",
                         help="Raw Data Path (BioLiP - SKIP).")
+    parser.add_argument("--path-featurized-data",
+                        nargs="?",
+                        default="./data/input_data/featurized_data/%s/"%TAX_ID,
+                        help="Featurized Data Path.")                    
     parser.add_argument("--path-featurized-data-tasks",
                         nargs="?",
                         default="./data/input_data/featurized_data/%s/tasks/"%TAX_ID,
