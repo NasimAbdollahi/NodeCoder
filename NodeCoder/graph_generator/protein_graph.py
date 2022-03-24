@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class protein_graph_generator(object):
-  def __init__(self, path_data, protein_tasks_files: list, protein_features_files: list, target_output: list,
+  def __init__(self, path_featurized_data, protein_tasks_files: list, protein_features_files: list, target_output: list,
                threshold_distance: float = 5):
     """
     Class for generating graphs ready to be used for GCN modeling
@@ -12,7 +12,7 @@ class protein_graph_generator(object):
     :param target_output: output columns to be used, in multi-task learning setting, for label list generation
     :param distance_threshold: distance threshold for edge generation based on cartesian coordinates
     """
-    self.path_data = path_data
+    self.path_data = path_featurized_data
     self.protein_tasks_files = protein_tasks_files
     self.protein_features_files = protein_features_files
     self.threshold_distance = threshold_distance
@@ -190,4 +190,3 @@ class protein_graph_generator(object):
         self.protein_frame = []
 
     self.edges = [self.edge_node1, self.edge_node2]
-
