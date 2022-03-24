@@ -3,8 +3,8 @@ import pandas as pd
 import os
 import math
 import glob
-from protein_graph import protein_graph_generator
-from utils import colors, csv_writter_known_proteins, csv_writter_grouping_protein, csv_writter_graph_data
+from NodeCoder.graph_generator.protein_graph import protein_graph_generator
+from NodeCoder.utils.utils import colors, csv_writter_known_proteins, csv_writter_grouping_protein, csv_writter_graph_data
 
 class Graph_Data_Generator(object):
     """
@@ -25,7 +25,7 @@ class Graph_Data_Generator(object):
         Creates a list of all protein files with known 3D structures.
         """
         if not os.path.exists(self.args.path_raw_data+self.args.KnownProteins_filename):
-            protein_files = glob.glob(self.args.path_raw_data+'/tasks/*.tasks.csv')
+            protein_files = glob.glob(self.args.path_featurized_data+'/tasks/*.tasks.csv')
             known_protein_files = []
             node_num = []
             missing_features_files = []
@@ -86,36 +86,35 @@ class Graph_Data_Generator(object):
             csv_writter_grouping_protein(self.args.path_graph_data, validation_name, validation_protein_filenames[i])
             csv_writter_grouping_protein(self.args.path_graph_data, train_name, train_protein_filenames[i])
 
-    def graph_data_files_generator(self):
+    def graph_data_files_generator(self, i):
         """
         generates and writes train and validation graph data files for all folds.
         to avoid regenerating the graph data, we first check if the graph data is generated or not.
         """
         self.grouping_proteins_for_train_validation_folds()
-        if not os.path.exists(self.args.path_graph_data+'train_1_edges.csv'):
+        if not os.path.exists(self.args.path_graph_data+'train_'+str(i+1)+'_nodes_ProteinID.csv'):
             print(colors.HEADER + "--- generating graph data started ... " + colors.ENDC)
-            for i in range(0, self.args.cross_validation_fold_number):
-                print("--- train graph data fold %s: --- " %(i+1))
-                Train_FilePath = self.args.path_graph_data + 'train_' + str(i+1) + '_ProteinFileNames.csv'
-                train_protein_tasks_filenames = np.array(pd.read_csv(Train_FilePath)["tasks file"])
-                train_protein_features_filenames = np.array(pd.read_csv(Train_FilePath)["features file"])
-                train_protein_graph = protein_graph_generator(self.args.path_raw_data, protein_tasks_files=train_protein_tasks_filenames, protein_features_files=train_protein_features_filenames,
-                                              target_output=self.args.graph_data_targets_name, threshold_distance=self.args.threshold_dist)
-                train_protein_graph.main()
-                train_name = 'train_' + str(i+1)
-                csv_writter_graph_data(train_protein_graph, train_name, self.args.graph_data_targets_name, self.args.path_graph_data)
-
-                print("--- validation graph data fold %s: --- " %(i+1))
-                Validation_FilePath = self.args.path_graph_data + 'validation_' + str(i+1) + '_ProteinFileNames.csv'
-                validation_protein_tasks_filenames = np.array(pd.read_csv(Validation_FilePath)["tasks file"])
-                validation_protein_features_filenames = np.array(pd.read_csv(Validation_FilePath)["features file"])
-                validation_protein_graph = protein_graph_generator(self.args.path_raw_data, protein_tasks_files=validation_protein_tasks_filenames, protein_features_files=validation_protein_features_filenames,
-                                                   target_output=self.args.graph_data_targets_name, threshold_distance=self.args.threshold_dist)
-                validation_protein_graph.main()
-                validation_name = 'validation_' + str(i+1)
-                csv_writter_graph_data(validation_protein_graph, validation_name, self.args.graph_data_targets_name, self.args.path_graph_data)
-                #csv_files_SanityCheck(ggen_validation, validation_name, target_output, CSV_path)
-            print("--- generating graph data completed. ---")
+            print("--- train graph data fold %s: --- " %(i+1))
+            Train_FilePath = self.args.path_graph_data + 'train_' + str(i+1) + '_ProteinFileNames.csv'
+            train_protein_tasks_filenames = np.array(pd.read_csv(Train_FilePath)["tasks file"])
+            train_protein_features_filenames = np.array(pd.read_csv(Train_FilePath)["features file"])
+            train_protein_graph = protein_graph_generator(self.args.path_featurized_data, protein_tasks_files=train_protein_tasks_filenames, protein_features_files=train_protein_features_filenames,
+                                          target_output=self.args.graph_data_targets_name, threshold_distance=self.args.threshold_dist)
+            train_protein_graph.main()
+            train_name = 'train_' + str(i+1)
+            csv_writter_graph_data(train_protein_graph, train_name, self.args.graph_data_targets_name, self.args.path_graph_data)
+            print("--- generating train graph data completed. ---")
+        elif not os.path.exists(self.args.path_graph_data+'validation_'+str(i+1)+'_nodes_ProteinID.csv'):
+            print("--- validation graph data fold %s: --- " %(i+1))
+            Validation_FilePath = self.args.path_graph_data + 'validation_' + str(i+1) + '_ProteinFileNames.csv'
+            validation_protein_tasks_filenames = np.array(pd.read_csv(Validation_FilePath)["tasks file"])
+            validation_protein_features_filenames = np.array(pd.read_csv(Validation_FilePath)["features file"])
+            validation_protein_graph = protein_graph_generator(self.args.path_featurized_data, protein_tasks_files=validation_protein_tasks_filenames, protein_features_files=validation_protein_features_filenames,
+                                               target_output=self.args.graph_data_targets_name, threshold_distance=self.args.threshold_dist)
+            validation_protein_graph.main()
+            validation_name = 'validation_' + str(i+1)
+            csv_writter_graph_data(validation_protein_graph, validation_name, self.args.graph_data_targets_name, self.args.path_graph_data)
+            print("--- generating validation graph data completed. ---")
         else:
             print(colors.HEADER + "--- graph data has already been generated. ---" + colors.ENDC)
 
