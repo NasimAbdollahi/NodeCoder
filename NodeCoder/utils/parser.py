@@ -54,15 +54,15 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     parser.set_defaults(KnownProteins_filename='KnownProteinFiles.csv')
     parser.add_argument("--path-graph-data",
                         nargs="?",
-                        default="../data/input_data/graph_data_%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
+                        default="../data/input_data/graph_data_%sA/%s/%sFoldCV/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number),
                         help="GraphData Path.")
     parser.add_argument("--path-results",
                         nargs="?",
-                        default="../results/graph_%sA/%sFoldCV/" %(threshold_dist, args.cross_validation_fold_number),
+                        default="../results/graph_%sA/%s/%sFoldCV/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number),
                         help="Results Path.")
     parser.add_argument("--path-protein-results",
                         nargs="?",
-                        default="../results/graph_%sA/%sFoldCV/%s/" %(threshold_dist, args.cross_validation_fold_number,protein_ID),
+                        default="../results/graph_%sA/%s/%sFoldCV/%s/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number,protein_ID),
                         help="Protein Results Path.")
 
     parser.set_defaults(multi_task_learning=multi_task_learning)

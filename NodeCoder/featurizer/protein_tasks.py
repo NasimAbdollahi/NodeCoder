@@ -1,6 +1,6 @@
 import collections
 import pandas as pd
-import featurizer.protein_sequences as protein_sequences
+import NodeCoder.featurizer.protein_sequences as protein_sequences
 from Bio import SwissProt
 from loguru import logger
 

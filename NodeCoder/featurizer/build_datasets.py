@@ -1,10 +1,10 @@
 import tqdm
+import os
 from loguru import logger
 from multiprocessing import Pool, cpu_count
-import featurizer.protein_features as protein_features 
-import featurizer.protein_tasks as protein_features 
-import featurizer.protein_sequences as protein_features 
-import os
+import NodeCoder.featurizer.protein_features as protein_features
+import NodeCoder.featurizer.protein_tasks as protein_tasks
+import NodeCoder.featurizer.protein_sequences as protein_sequences
 
 
 class DataBuilder(object):

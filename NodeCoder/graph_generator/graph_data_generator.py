@@ -3,8 +3,10 @@ import pandas as pd
 import os
 import math
 import glob
-from NodeCoder.graph_generator.protein_graph import protein_graph_generator
+import time
+from graph_generator.protein_graph import protein_graph_generator
 from NodeCoder.utils.utils import colors, csv_writter_known_proteins, csv_writter_grouping_protein, csv_writter_graph_data
+
 
 class Graph_Data_Generator(object):
     """
@@ -91,10 +93,13 @@ class Graph_Data_Generator(object):
         generates and writes train and validation graph data files for all folds.
         to avoid regenerating the graph data, we first check if the graph data is generated or not.
         """
-        self.grouping_proteins_for_train_validation_folds()
-        if not os.path.exists(self.args.path_graph_data+'train_'+str(i+1)+'_nodes_ProteinID.csv'):
-            print(colors.HEADER + "--- generating graph data started ... " + colors.ENDC)
-            print("--- train graph data fold %s: --- " %(i+1))
+        if i == 0:
+            self.grouping_proteins_for_train_validation_folds()
+        if not os.path.exists(self.args.path_graph_data+'train_'+str(i+1)+'_nodes_ProteinID.csv') and \
+                not os.path.exists(self.args.path_graph_data+'validation_'+str(i+1)+'_nodes_ProteinID.csv'):
+            start_time = time.time()
+            print("--- generating graph data for fold %s started! --- " %(i+1))
+
             Train_FilePath = self.args.path_graph_data + 'train_' + str(i+1) + '_ProteinFileNames.csv'
             train_protein_tasks_filenames = np.array(pd.read_csv(Train_FilePath)["tasks file"])
             train_protein_features_filenames = np.array(pd.read_csv(Train_FilePath)["features file"])
@@ -103,9 +108,9 @@ class Graph_Data_Generator(object):
             train_protein_graph.main()
             train_name = 'train_' + str(i+1)
             csv_writter_graph_data(train_protein_graph, train_name, self.args.graph_data_targets_name, self.args.path_graph_data)
-            print("--- generating train graph data completed. ---")
-        elif not os.path.exists(self.args.path_graph_data+'validation_'+str(i+1)+'_nodes_ProteinID.csv'):
-            print("--- validation graph data fold %s: --- " %(i+1))
+            print("--- generating train graph data for fold %s completed in %s seconds. ---"%(i+1, time.time() - start_time))
+
+            start_time = time.time()
             Validation_FilePath = self.args.path_graph_data + 'validation_' + str(i+1) + '_ProteinFileNames.csv'
             validation_protein_tasks_filenames = np.array(pd.read_csv(Validation_FilePath)["tasks file"])
             validation_protein_features_filenames = np.array(pd.read_csv(Validation_FilePath)["features file"])
@@ -114,7 +119,7 @@ class Graph_Data_Generator(object):
             validation_protein_graph.main()
             validation_name = 'validation_' + str(i+1)
             csv_writter_graph_data(validation_protein_graph, validation_name, self.args.graph_data_targets_name, self.args.path_graph_data)
-            print("--- generating validation graph data completed. ---")
+            print("--- generating validation graph data for fold %s completed in %s seconds. ---"%(i+1, time.time() - start_time))
         else:
             print(colors.HEADER + "--- graph data has already been generated. ---" + colors.ENDC)
 

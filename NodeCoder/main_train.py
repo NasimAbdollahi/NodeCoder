@@ -27,7 +27,7 @@ def main():
   threshold_dist = 5 #(A)
 
   """ default is single-task learning unless it is specified! """
-  args = parameter_parser(Task, NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning='No')
+  args = parameter_parser(NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning='No',Task=Task)
   tab_printer(args)
 
   """ 

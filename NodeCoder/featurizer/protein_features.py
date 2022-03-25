@@ -12,7 +12,7 @@ from Bio.PDB.Polypeptide import PPBuilder
 from Bio.PDB.Model import Model
 from loguru import logger
 from tempfile import NamedTemporaryFile
-import featurizer.protein_sequences as protein_sequences
+import NodeCoder.featurizer.protein_sequences as protein_sequences
 freesasa.setVerbosity(freesasa.nowarnings)
 
 
