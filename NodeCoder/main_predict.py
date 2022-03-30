@@ -3,12 +3,12 @@ import torch
 import numpy as np
 import random
 import time
-from parser import parameter_parser
+from utils.parser import parameter_parser
 from graph_data_generator import Graph_Data_Generator
-from clustering import Clustering
-from NodeCoder import NodeCoder_Model
-from NodeCoder_predict import NodeCoder_Predictor
-from utils import colors, tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch,\
+from graph_generator.clustering import Clustering
+from gcn.NodeCoder import NodeCoder_Model
+from gcn.NodeCoder_predict import NodeCoder_Predictor
+from utils.utils import colors, tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch,\
     csv_writer_prediction
 
 

@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import pandas as pd
 from sklearn import metrics
-from utils import colors
+from NodeCoder.utils.utils import colors
 
 
 class NodeCoder_Predictor(object):
