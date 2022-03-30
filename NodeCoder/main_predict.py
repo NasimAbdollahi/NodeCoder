@@ -32,7 +32,8 @@ def main():
     threshold_dist = 5
 
     """ When using NodeCoder to predict protein functions, default is loading trained model with single-task learning setup! """
-    args = parameter_parser(Task, protein_ID=protein_ID, protein_fold_number=protein_fold_number, threshold_dist=threshold_dist)
+    args = parameter_parser(NodeCoder_usage='predict', Task=Task, protein_ID=protein_ID, protein_fold_number=protein_fold_number,
+                            threshold_dist=threshold_dist, centrality_feature=False)
     tab_printer(args)
 
     """ 
@@ -63,7 +64,7 @@ def main():
     print(colors.HEADER + "\n--- clustering protein graph started ..." + colors.ENDC)
     protein_graph = graph_reader(args.protein_edge_path)
     protein_edge_features = edge_feature_reader(args.protein_edge_feature_path)
-    protein_features = feature_reader(args.protein_features_path, args.protein_edge_path)
+    protein_features = feature_reader(args.protein_features_path, args.protein_edge_path, args.centrality_feature)
     protein_target = target_reader(args.protein_target_path, args.target_name)
     protein_graph_data = Clustering(args, args.protein_filename_path, protein_graph, protein_features, protein_edge_features, protein_target)
     protein_graph_data.decompose()
