@@ -11,9 +11,12 @@ class NodeCoder_Model(torch.nn.Module):
         super(NodeCoder_Model, self).__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.args = args
-        self.args.input_channels = max(pd.read_csv(self.args.train_features_path[0])['feature_id'])+1
+        if self.args.centrality_feature:
+        	self.args.input_channels = max(pd.read_csv(self.args.train_features_path[0])['feature_id'])+2
+        else:
+        	self.args.input_channels = max(pd.read_csv(self.args.train_features_path[0])['feature_id'])+1
         self.args.output_channels = max(pd.read_csv(self.args.train_target_path[0])[self.args.target_name[0]])+1
-        if self.args.multi_task_learning == 'Yes':
+        if self.args.multi_task_learning:
             self.args.output_layers = [[self.args.output_layer_size] for iter in range(0, len(self.args.target_name))]
         else:
             self.args.output_layers = [[self.args.output_layer_size] for iter in range(0, 1)]

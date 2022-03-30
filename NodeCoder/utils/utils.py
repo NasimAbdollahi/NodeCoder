@@ -96,7 +96,7 @@ def graph_reader(path):
     graph = 'NA'
   return graph
 
-def feature_reader(path, edge_path: str='NA'):
+def feature_reader(path, edge_path: str='NA', centrality_feature:bool=False):
   """
   Reading the sparse feature matrix stored as csv from the disk.
   :param path: Path to the csv file.
@@ -111,10 +111,10 @@ def feature_reader(path, edge_path: str='NA'):
     feature_count = np.array(feature_index).max()+1
     features = coo_matrix((feature_values, (node_index, feature_index)), shape=(node_count, feature_count)).toarray()
     """ Add Node Centrality Feature (Node Degree or average of edge features) """
-    # if not edge_path == 'NA':
-    #   edges = pd.read_csv(edge_path)
-    #   feature_centrality = np.array(edges['id1'].value_counts().sort_index()).reshape(features.shape[0], 1)
-    #   features = np.concatenate((features, feature_centrality), axis=1)
+    if centrality_feature:
+    	edges = pd.read_csv(edge_path)
+    	feature_centrality = np.array(edges['id1'].value_counts().sort_index()).reshape(features.shape[0], 1)
+    	features = np.concatenate((features, feature_centrality), axis=1)
   except:
     print(colors.WARNING + "Warning: file containing node features could not be found ...!!!!!" + colors.ENDC)
     features = 'NA'

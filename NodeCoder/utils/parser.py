@@ -1,7 +1,8 @@
 import argparse
 
 def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
-                     protein_ID:str='NA', protein_fold_number:int=0, threshold_dist:int=5, multi_task_learning:str='No'):
+                     protein_ID:str='NA', protein_fold_number:int=0, threshold_dist:int=5, multi_task_learning:bool=False,
+                     centrality_feature:bool=False):
     """
     A method to parse up command line parameters. By default it trains on the PubMed dataset.
     The default hyperparameters give a good quality representation without grid search.
@@ -9,6 +10,7 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     parser = argparse.ArgumentParser(description="Run .")
 
     parser.set_defaults(NodeCoder_usage=NodeCoder_usage)
+    parser.set_defaults(centrality_feature=centrality_feature)
 
     parser.set_defaults(TAX_ID='9606')
     parser.set_defaults(PROTEOME_ID='UP000005640')

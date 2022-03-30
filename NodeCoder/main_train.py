@@ -21,13 +21,14 @@ def main():
   """ 
   Here you need to specify:
   Tasks of interest
-  Threshold distance for creating graph contact network
+  Threshold distance in Angstrom (A) for creating graph contact network
   """
   Task = ['y_Ligand']
-  threshold_dist = 5 #(A)
+  threshold_dist = 5
 
   """ default is single-task learning unless it is specified! """
-  args = parameter_parser(NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning='No',Task=Task)
+  args = parameter_parser(NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning=False,
+                          Task=Task, centrality_feature=True)
   tab_printer(args)
 
   """ 
@@ -58,7 +59,7 @@ def main():
     start_time = time.time()
     print(colors.HEADER + "\n--- clustering graphs in fold %s started ..." %(i+1) + colors.ENDC)
     train_graph = graph_reader(args.train_edge_path[i])
-    train_features = feature_reader(args.train_features_path[i], args.train_edge_path[i])
+    train_features = feature_reader(args.train_features_path[i], args.train_edge_path[i], args.centrality_feature)
     train_edge_features = edge_feature_reader(args.train_edge_feature_path[i])
     train_target = target_reader(args.train_target_path[i], args.target_name)
     if args.downSampling_majority_class == 'Yes':
@@ -70,7 +71,7 @@ def main():
     start_time = time.time()
     validation_graph = graph_reader(args.validation_edge_path[i])
     validation_edge_features = edge_feature_reader(args.validation_edge_feature_path[i])
-    validation_features = feature_reader(args.validation_features_path[i], args.validation_edge_path[i])
+    validation_features = feature_reader(args.validation_features_path[i], args.validation_edge_path[i], args.centrality_feature)
     validation_target = target_reader(args.validation_target_path[i], args.target_name)
     validation_clustered = Clustering(args, args.validation_protein_filename_path[i], validation_graph, validation_features, validation_edge_features, validation_target, cluster_number=args.validation_cluster_number)
     validation_clustered.decompose()
