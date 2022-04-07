@@ -1,11 +1,9 @@
 import torch
 import pandas as pd
 import random
-#import metis
 import numpy as np
-# import networkx as nx
 from sklearn.model_selection import train_test_split
-from utils import protein_clustering
+from NodeCoder.utils.utils import protein_clustering
 
 class Clustering(object):
     """
@@ -39,10 +37,7 @@ class Clustering(object):
         """
         Decomposing the graph, partitioning the features and target, creating Torch arrays.
         """
-        if self.args.clustering_method == "metis":
-            print("Clustering graphs by Metis graph clustering.")
-            self.metis_clustering()
-        elif self.args.clustering_method == "Physical":
+        if self.args.clustering_method == "Physical":
             print("Physical Protein Clustering: clustering graphs by grouping proteins")
             self.physical_protein_clustering()
         else:
@@ -66,14 +61,6 @@ class Clustering(object):
         protein_filenames = np.array(pd.read_csv(self.protein_filename)["Protein File"])
         Proteins_Node = np.array(pd.read_csv(self.protein_filename)["Node Num"])
         self.cluster_membership = protein_clustering(protein_filenames, Proteins_Node, self.cluster_number)
-
-    def metis_clustering(self):
-        """
-        Clustering the graph with Metis.
-        """
-        #(st, parts) = metis.part_graph(self.graph, self.cluster_number)
-        #self.clusters = list(set(parts))
-        #self.cluster_membership = {node: membership for node, membership in enumerate(parts)}
 
     def general_data_partitioning(self):
         """
