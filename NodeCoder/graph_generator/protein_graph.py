@@ -174,7 +174,7 @@ class protein_graph_generator(object):
       if self.protein_frame.shape[0] != 0:
         protein_count += 1
         self.protein_Nan_Count.append(NaN_Count.sum())
-        #print("%s: %s" % (protein_count, self.protein_tasks_files[i].split(".", -1)[0]))
+        # print("%s: %s" % (protein_count, self.protein_tasks_files[i].split(".", -1)[0]))
         coordinate_frame, feature_frame, output_frame, sequence_data = self.data_prep()
         self.graph_gen(coordinate_frame=coordinate_frame,
                        feature_frame=feature_frame,

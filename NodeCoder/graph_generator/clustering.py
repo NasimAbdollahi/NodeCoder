@@ -3,7 +3,8 @@ import pandas as pd
 import random
 import numpy as np
 from sklearn.model_selection import train_test_split
-from NodeCoder.utils.utils import protein_clustering
+from NodeCoder.utilities.utils import protein_clustering
+from NodeCoder.utilities.config import logger
 
 class Clustering(object):
     """
@@ -38,10 +39,10 @@ class Clustering(object):
         Decomposing the graph, partitioning the features and target, creating Torch arrays.
         """
         if self.args.clustering_method == "Physical":
-            print("Physical Protein Clustering: clustering graphs by grouping proteins")
+            logger.info("Physical Protein Clustering: clustering is performed by grouping proteins.")
             self.physical_protein_clustering()
         else:
-            print("Clustering graphs by Random graph clustering.")
+            logger.warning("Random Protein Clustering: clustering is performed by random graph clustering. Not recommended!")
             self.random_clustering()
         self.general_data_partitioning()
         self.transfer_edges_and_nodes()

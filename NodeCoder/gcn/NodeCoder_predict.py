@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import pandas as pd
 from sklearn import metrics
-from NodeCoder.utils.utils import colors
+from NodeCoder.utilities.config import logger
 
 
 class NodeCoder_Predictor(object):
@@ -45,7 +45,7 @@ class NodeCoder_Predictor(object):
         """
         for layer in self.model.children():
             if hasattr(layer, 'reset_parameters'):
-                print(f'Reset trainable parameters of layer = {layer}')
+                logger.info(f"Reset trainable parameters of layer = {layer}")
                 layer.reset_parameters()
     
     def Optimizer(self):
@@ -82,9 +82,9 @@ class NodeCoder_Predictor(object):
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         """ Print model's state_dict """
-        print(colors.HEADER + "Loaded Model's state_dict:" + colors.ENDC)
-        for param_tensor in self.model.state_dict():
-            print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())
+        # logger.info("Model's state_dict:")
+        # for param_tensor in self.model.state_dict():
+        #     logger.info(f"{param_tensor} \t {self.model.state_dict()[param_tensor].size()}")
         self.model.eval()
         self.test_evaluation()
         # self.test_metrics_perprotein()

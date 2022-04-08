@@ -6,8 +6,9 @@ import math
 import time
 import os
 from sklearn import metrics
-from utils import colors, label_distribution, optimum_epoch
+from NodeCoder.utilities.utils import label_distribution, optimum_epoch
 import warnings
+from NodeCoder.utilities.config import logger
 
 
 class NodeCoder_Trainer(object):
@@ -20,13 +21,11 @@ class NodeCoder_Trainer(object):
         """  
         self.args = args
         self.fold = fold
-        # self.args.output_layers = [[self.args.output_layer_size] for iter in range(0, np.shape(train_clustered.target)[1])]
         self.TaskNum = np.shape(train_clustered.target)[1]
         self.train_clustered = train_clustered
         self.validation_clustered = validation_clustered
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-        # self.create_model()
         self.model = NodeCoder
         self.reset_weights()
         self.Optimizer()
@@ -79,22 +78,8 @@ class NodeCoder_Trainer(object):
         """
         for layer in self.model.children():
             if hasattr(layer, 'reset_parameters'):
-                print(f'Reset trainable parameters of layer = {layer}')
+                logger.info(f"Reset trainable parameters of layer = {layer}")
                 layer.reset_parameters()
-
-    # def create_model(self):
-    #     """
-    #     Creating a StackedGCN and transferring to CPU/GPU.
-    #     """
-    #     self.model = StackedGCN(self.args, self.train_clustered.feature_count, self.train_clustered.class_count)
-    #     """ to avoid possible weight leakage: """
-    #     self.reset_weights()
-    #     self.model = self.model.to(self.device)
-    #     # """ To load the an exported model and run inference without re-defining the model class: """
-    #     #if not os.path.exists(self.args.CheckPoint_path[self.fold]):
-    #     #            os.makedirs(self.args.CheckPoint_path[self.fold], exist_ok=True)
-    #     #model_scripted = torch.jit.script(self.model)
-    #     #model_scripted.save(self.args.CheckPoint_path[self.fold] + 'Model_scripted.pt')
 
     def Optimizer(self):
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.learning_rate, betas=self.args.betas)
@@ -222,7 +207,6 @@ class NodeCoder_Trainer(object):
         Training the model.
         Train predictions and targets are prepared for performance evaluation: calculating metrics for all tasks.
         """
-        print(" --- positive label distribution: --- ")
         self.train_ClassDistRatio, self.MajorityClass = label_distribution(self.train_clustered, self.args.target_name, "train")
         label_distribution(self.validation_clustered, self.args.target_name, "validation")
 
@@ -238,11 +222,10 @@ class NodeCoder_Trainer(object):
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.learning_rate, betas=self.args.betas)
         self.model.train()
         """ Print train model's state_dict """
-        print(colors.HEADER + "Model's state_dict:" + colors.ENDC)
-        for param_tensor in self.model.state_dict():
-            print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())
+        # logger.info("Model's state_dict:")
+        # for param_tensor in self.model.state_dict():
+        #     logger.info(f"{param_tensor} \t {self.model.state_dict()[param_tensor].size()}")
 
-        log = 'Epoch: {:03d}, train loss: {:.6f}, validation loss:{:.6f}, train balanced acc: {:.6f}, validation balanced acc:{:.6f}, train rocauc: {:.6f}, validation rocauc:{:.6f}'
         pe = 0
         epochs = np.arange(0, self.args.epochs)
         for epoch in epochs:
@@ -255,9 +238,7 @@ class NodeCoder_Trainer(object):
             self.train_predictions = []
             self.train_predictions_prob = []
             self.train_targets = []
-            #self.Train_Cluster_Target = []
-            #self.Train_Cluster_Prediction = []
-            #self.Train_Cluster_Prediction_prob = []
+
             for cluster in self.train_clustered.clusters:
                 self.clusterCount += 1
                 self.optimizer.zero_grad()
@@ -268,8 +249,9 @@ class NodeCoder_Trainer(object):
             if epoch in self.Performance_epochs:
                 self.train_metrics()
                 self.validation()
-                print(log.format(epoch+1, self.Train_Loss[pe], self.Validation_Loss[pe], self.Train_BalancedAcc[pe],
-                            self.Validation_BalancedAcc[pe], self.Train_ROCAUC[pe], self.Validation_ROCAUC[pe]))
+                logger.info(f"Epoch: {epoch+1:03d}, train loss: {self.Train_Loss[pe]:.6f}, validation loss:{self.Validation_Loss[pe]:.6f},"
+                            f" train balanced acc: {self.Train_BalancedAcc[pe]:.6f}, validation balanced acc:{self.Validation_BalancedAcc[pe]:.6f},"
+                            f" train roc-auc: {self.Train_ROCAUC[pe]:.6f}, validation roc-auc:{self.Validation_ROCAUC[pe]:.6f}")
                 pe += 1
             if epoch in self.CheckPoint_epochs:
                 if not os.path.exists(self.args.CheckPoint_path[self.fold]):
@@ -286,7 +268,7 @@ class NodeCoder_Trainer(object):
                     'Validation_PRAUC': self.Validation_ROCAUC,
                     'Validation_Loss': self.Validation_ROCAUC,
                 }, CheckPoint_path)
-            print("--- %s sec time per epoch ---" % (time.time() - start_time))
+            logger.info(f"time per epoch: {time.time() - start_time} seconds")
 
     def validation(self):
         """
@@ -329,14 +311,14 @@ class NodeCoder_Trainer(object):
         try:
             checkpoint = torch.load(CheckPoint_path)
         except:
-            print(colors.WARNING + "Warning: Looks like the model is not trained yet. Delete created folder and train again...!!!!!" + colors.ENDC)
+            logger.warning("Looks like the model is not trained yet. Change parameters and train again...!!!!!")
             exit()
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         """ Print test model's state_dict """
-        print(colors.HEADER + "Model's state_dict:" + colors.ENDC)
-        for param_tensor in self.model.state_dict():
-            print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())
+        # logger.info("Model's state_dict:")
+        # for param_tensor in self.model.state_dict():
+        #     logger.info(f"{param_tensor} \t {self.model.state_dict()[param_tensor].size()}")
         self.model.eval()
         self.test_evaluation()
         self.test_metrics_per_protein()
@@ -415,7 +397,7 @@ class NodeCoder_Trainer(object):
             precision, recall, thresholds = metrics.precision_recall_curve(self.train_targets.cpu().reshape(-1, 1), self.train_predictions_prob.cpu().reshape(-1, 1))
             self.Train_PRAUC.append(metrics.auc(recall, precision))
         except:
-            print(colors.WARNING + "Warning: only one class present for some targets. In this case metrics are not defined ...!!!!!" + colors.ENDC)
+            logger.warning("Only one class presents for some targets. In this case metrics are not defined ...!!!!!")
 
         """ Metrics per tasks: """
         for i in range(0, self.TaskNum):
@@ -430,7 +412,7 @@ class NodeCoder_Trainer(object):
                 precision, recall, thresholds = metrics.precision_recall_curve(self.train_targets.cpu()[i], self.train_predictions_prob.cpu()[i])
                 self.Train_Task_PRAUC.append(metrics.auc(recall, precision))
             except:
-                print(colors.WARNING + "Warning: only one class present in %s. In this case metrics are not defined for this target ...!!!!!" %self.args.target_name[i] + colors.ENDC)
+                logger.warning(f"Only one class presents in {self.args.target_name[i]}. In this case metrics are not defined ...!!!!!")
 
         """ Metrics per cluster: """
         #for cluster in self.train_clustered.clusters:
@@ -457,7 +439,7 @@ class NodeCoder_Trainer(object):
             precision, recall, thresholds = metrics.precision_recall_curve(self.validation_targets.cpu().reshape(-1, 1), self.validation_predictions_prob.cpu().reshape(-1, 1))
             self.Validation_PRAUC.append(metrics.auc(recall, precision))
         except:
-            print(colors.WARNING + "Warning: only one class present in some targets. In this case metrics are not defined ...!!!!!" + colors.ENDC)
+            logger.warning("Only one class presents for some targets. In this case metrics are not defined ...!!!!!")
 
         """ Metrics per tasks: """
         for i in range(0, self.TaskNum):
@@ -472,7 +454,7 @@ class NodeCoder_Trainer(object):
                 precision, recall, thresholds = metrics.precision_recall_curve(self.validation_targets.cpu()[i], self.validation_predictions_prob.cpu()[i])
                 self.Validation_Task_PRAUC.append(metrics.auc(recall, precision))
             except:
-                print(colors.WARNING + "Warning: only one class present in %s. In this case metrics are not defined for this target ...!!!!!" %self.args.target_name[i] + colors.ENDC)
+                logger.warning(f"Only one class presents in {self.args.target_name[i]}. In this case metrics are not defined ...!!!!!")
 
         """ Metrics per cluster: """
         #for cluster in self.validation_clustered.clusters:
