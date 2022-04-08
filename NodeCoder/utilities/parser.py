@@ -188,7 +188,7 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
 
     if args.NodeCoder_usage == 'train':
         if args.multi_task_learning == 'No':
-        	hidden_layers = '_'.join([str(l) for l in args.input_layers])
+            hidden_layers = '_'.join([str(l) for l in args.input_layers])
             filename = args.target_name[0]+'_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
         else:
             filename = str(len(args.target_name))+'Targets_HiddenLayers_'+str(args.input_layers)+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
