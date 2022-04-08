@@ -8,7 +8,7 @@ from graph_generator.graph_data_generator import Graph_Data_Generator
 from graph_generator.clustering import Clustering
 from gcn.NodeCoder import NodeCoder_Model
 from gcn.NodeCoder_predict import NodeCoder_Predictor
-from utilities.utils import colors, tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch,\
+from utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch,\
     csv_writer_prediction
 from utilities.config import logger
 

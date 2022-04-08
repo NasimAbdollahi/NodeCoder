@@ -6,6 +6,8 @@ import networkx as nx
 from texttable import Texttable
 from scipy.sparse import coo_matrix
 import matplotlib.pyplot as plt
+from NodeCoder.utilities.config import logger
+
 
 class colors:
   HEADER = '\033[95m'
@@ -25,9 +27,9 @@ def tab_printer(args):
   """
   args = vars(args)
   keys = sorted(args.keys())
-  t = Texttable()
-  t.add_rows([["Parameter", "Value"]] + [[k.replace("_", " ").capitalize(), args[k]] for k in keys])
-  print(t.draw())
+  table = Texttable()
+  table.add_rows([["Parameter", "Value"]] + [[k.replace("_", " ").capitalize(), args[k]] for k in keys])
+  print(colors.OKCYAN + table.draw() + colors.ENDC)
 
 def csv_files_SanityCheck(Graph,name, path):
   DataFrame = pd.DataFrame(list(zip(Graph.protein_files_name, Graph.node_num, Graph.protein_frame_Nan_Count)), columns=['Protein File', 'Node Num', 'Removed NaNs'])
@@ -91,9 +93,10 @@ def graph_reader(path):
   """
   try:
     graph = nx.from_edgelist(pd.read_csv(path).values.tolist())
-  except:
-    print(colors.WARNING + "Warning: file containing graph data (contact network) could not be found ...!!!!!" + colors.ENDC)
-    graph = 'NA'
+  except FileNotFoundError:
+    logger.critical("file containing graph data (contact network) could not be found.")
+    logger.info("graph files are required to be generated before attempting to train NodeCoder.")
+    raise
   return graph
 
 def feature_reader(path, edge_path: str='NA', centrality_feature:bool=False):
@@ -110,14 +113,17 @@ def feature_reader(path, edge_path: str='NA', centrality_feature:bool=False):
     node_count = np.array(node_index).max()+1
     feature_count = np.array(feature_index).max()+1
     features = coo_matrix((feature_values, (node_index, feature_index)), shape=(node_count, feature_count)).toarray()
-    """ Add Node Centrality Feature (Node Degree or average of edge features) """
+    """ Add Node Centrality Feature (Node Degree or Weighted Node Degree: average of edge features) """
     if centrality_feature:
-    	edges = pd.read_csv(edge_path)
-    	feature_centrality = np.array(edges['id1'].value_counts().sort_index()).reshape(features.shape[0], 1)
-    	features = np.concatenate((features, feature_centrality), axis=1)
-  except:
-    print(colors.WARNING + "Warning: file containing node features could not be found ...!!!!!" + colors.ENDC)
-    features = 'NA'
+      edges = pd.read_csv(edge_path)
+      feature_centrality = np.array(edges['id1'].value_counts().sort_index()).reshape(features.shape[0], 1)
+      features = np.concatenate((features, feature_centrality), axis=1)
+  except FileNotFoundError:
+    logger.critical("file containing node features could not be found.")
+    logger.info("graph files are required to be generated before attempting to train NodeCoder.")
+    raise
+  except Exception as e:
+    logger.error(e)
   return features
 
 def feature_reader_leave_one_feature(path, f):
@@ -137,8 +143,9 @@ def feature_reader_leave_one_feature(path, f):
     features = coo_matrix((feature_values, (node_index, feature_index)), shape=(node_count, feature_count)).toarray()
     features = np.delete(features, f, axis=1)
   except:
-    print(colors.WARNING + "Warning: file containing node features could not be found ...!!!!!" + colors.ENDC)
-    features = 'NA'
+    logger.critical("file containing node features could not be found.")
+    logger.info("graph files are required to be generated before attempting to train NodeCoder.")
+    raise
   return features
 
 def edge_feature_reader(path):
@@ -155,8 +162,9 @@ def edge_feature_reader(path):
   try:
     edge_features = np.array(pd.read_csv(path))
   except:
-    print(colors.WARNING + "Warning: file containing edge features could not be found ...!!!!!" + colors.ENDC)
-    edge_features = 'NA'
+    logger.critical("file containing edge features could not be found.")
+    logger.info("graph files are required to be generated before attempting to train NodeCoder.")
+    raise
   return edge_features
 
 def target_reader(path, target_name):
@@ -172,8 +180,9 @@ def target_reader(path, target_name):
       target.append(np.array(pd.read_csv(path)[i]).tolist())
     target = np.array(target).transpose()
   except:
-    print(colors.WARNING + "Warning: file containing target labels could not be found ...!!!!!" + colors.ENDC)
-    target = 'NA'
+    logger.critical("file containing target labels could not be found.")
+    logger.info("graph files are required to be generated before attempting to train NodeCoder.")
+    raise
   return target
 
 def ProteinID_reader(path):
@@ -188,8 +197,8 @@ def optimum_epoch(path):
   #PRAUC = np.array(pd.read_csv(path)['Validation PR_AUC']).tolist()
   best_epoch = epoch[ROCAUC.index(max(ROCAUC))]
   if best_epoch == 0:
-    print(colors.WARNING + "Warning: NodeCoder is not learning: best epoch is found to be the first epoch. You need to "
-                           "increase training epochs...!!!!!" + colors.ENDC)
+    logger.warning("NodeCoder is not learning: best epoch is found to be the first epoch. You need to increase training "
+                   "epoch or change model parameters...!!!!!")
     exit()
   return best_epoch
 
@@ -223,9 +232,9 @@ def DownSampling(args, graph, features, edge_features, target):
     selected_nodes = sorted(np.array(positive_nodes + selected_negative_nodes))
     not_selected_nodes = list(set(list(graph.nodes))^set(selected_nodes))
     if (len(set(not_selected_nodes)) == len(not_selected_nodes)):
-      print("All elements are unique. ")
+      logger.info("DownSampling: all elements are unique.")
     else:
-      print("All elements are not unique. ")
+      logger.info("DownSampling: elements are not unique.")
 
     """ updating the graph: removes node and all edges connected to the node: """
     for i in not_selected_nodes:
@@ -409,12 +418,10 @@ def label_distribution(Data, Tasks, title):
       else:
         train_ClassDistRatio.append((len(nodes) - np.count_nonzero(target[nodes, i]))/np.count_nonzero(target[nodes, i]))
         MajorityClass.append(0)
-      print(colors.OKGREEN + "%s percent positive labels for %s in %s data." % (label_dist[i], Tasks[i], title) + colors.ENDC)
-      print("distribution in clusters:")
-      print(label_dist_cluster)
-      print('\n')
+      logger.info(f"{label_dist[i]} percent positive labels for {Tasks[i]} in {title} data.")
+      logger.info(f"distribution in clusters:{label_dist_cluster}")
     except:
-      print(colors.WARNING + "Warning: there is no positive label for %s in %s data ...!!!!!" % (Tasks[i], title)+ colors.ENDC)
+      logger.critical(f"There is no positive label in {title} data for {Tasks[i]} ")
       MajorityClass.append(0)
 
   return train_ClassDistRatio, MajorityClass

@@ -5,7 +5,6 @@ import random
 import time
 from featurizer.build_datasets import DataBuilder
 from utilities.parser import parameter_parser
-from graph_generator.graph_data_generator import Graph_Data_Generator
 from utilities.utils import tab_printer
 from utilities.config import logger
 
