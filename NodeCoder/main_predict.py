@@ -3,13 +3,14 @@ import torch
 import numpy as np
 import random
 import time
-from utils.parser import parameter_parser
-from graph_data_generator import Graph_Data_Generator
+from utilities.parser import parameter_parser
+from graph_generator.graph_data_generator import Graph_Data_Generator
 from graph_generator.clustering import Clustering
 from gcn.NodeCoder import NodeCoder_Model
 from gcn.NodeCoder_predict import NodeCoder_Predictor
-from utils.utils import colors, tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch,\
+from utilities.utils import colors, tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch,\
     csv_writer_prediction
+from utilities.config import logger
 
 
 def main():
@@ -54,31 +55,32 @@ def main():
     start_time = time.time()
     Graph_Data = Graph_Data_Generator(args)
     Graph_Data.protein_graph_data_files_generator()
-    print("--- %s seconds for generating protein graph data files. ---" %(time.time() - start_time))
+    logger.success(f"generating protein graph data files completed in {(time.time() - start_time)} seconds.")
 
     """ NodeCoder Model """
     NodeCoder_Network = NodeCoder_Model(args)
+    logger.success("NodeCoder architecture initialization done.")
 
     """ Preparing graph data """
     start_time = time.time()
-    print(colors.HEADER + "\n--- clustering protein graph started ..." + colors.ENDC)
+    logger.info(f"clustering protein graph started...")
     protein_graph = graph_reader(args.protein_edge_path)
     protein_edge_features = edge_feature_reader(args.protein_edge_feature_path)
     protein_features = feature_reader(args.protein_features_path, args.protein_edge_path, args.centrality_feature)
     protein_target = target_reader(args.protein_target_path, args.target_name)
     protein_graph_data = Clustering(args, args.protein_filename_path, protein_graph, protein_features, protein_edge_features, protein_target)
     protein_graph_data.decompose()
-    print("--- %s seconds for clustering protein graph ---" %(time.time() - start_time))
+    logger.info(f"clustering protein graph completed in {(time.time() - start_time)} seconds.")
 
     TrueLabel = []
     PredictedLabel = []
     PredictedProb = []
     for t in range(0, len(Task)):
-        print(colors.HEADER + "\n--- Prediction with trained NodeCoder for %s started ... " %Task[t].split('_')[-1] + colors.ENDC)
+        logger.info(f"Prediction with trained NodeCoder for {Task[t].split('_')[-1]} started ...")
         """ using the saved checkpoint to run inference with trained model """
         """ find the optimum epoch for reading the trained  model: """
         checkpoint_epoch = optimum_epoch(args.Metrics_path[t])
-        print("--- Best epoch - NodeCoder trained for task %s: %s ---" %(Task[t], checkpoint_epoch))
+        logger.info(f"Best epoch - trained NodeCoder for task {Task[t]}: {checkpoint_epoch}")
         predictor = NodeCoder_Predictor(args, NodeCoder_Network.model, protein_graph_data, t, checkpoint_epoch)
         predictor.test()
 
@@ -87,9 +89,9 @@ def main():
         PredictedProb.append(list(predictor.predictions_prob))
 
     """ Writing predicted and target labels """
-    print(colors.HEADER + "\n--- Writing predicted labels ... " + colors.ENDC)
+    logger.info("Writing predicted labels ...")
     csv_writer_prediction(Task, TrueLabel, PredictedLabel, PredictedProb, args.protein_node_proteinID_path, args.protein_prediction_fileName)
-    print(colors.HEADER + "\n--- Prediction is successfully completed! --- " + colors.ENDC)
+    logger.success("Prediction is successfully completed.")
 
 if __name__ == "__main__":
     main()

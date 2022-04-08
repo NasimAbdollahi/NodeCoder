@@ -4,9 +4,10 @@ import numpy as np
 import random
 import time
 from featurizer.build_datasets import DataBuilder
-from parser import parameter_parser
-from graph_data_generator import Graph_Data_Generator
-from utils import tab_printer
+from utilities.parser import parameter_parser
+from graph_generator.graph_data_generator import Graph_Data_Generator
+from utilities.utils import tab_printer
+from utilities.config import logger
 
 def main():
   """
@@ -21,9 +22,9 @@ def main():
 
   """ 
   Here you need to specify:
-  Threshold distance for creating graph contact network
+  Threshold distance in Angstrom (A) for creating graph contact network
   """
-  threshold_dist = 5 #(A)
+  threshold_dist = 5
 
   """ default is single-task learning unless it is specified! """
   args = parameter_parser(NodeCoder_usage='data_generation', TAX_ID=TAX_ID, PROTEOME_ID=PROTEOME_ID, threshold_dist=threshold_dist)
@@ -50,16 +51,7 @@ def main():
   start_time = time.time()
   featurized_data = DataBuilder(args)
   featurized_data.main()
-  print("--- %s seconds for generating features and tasks files from raw data. ---" %(time.time() - start_time))
-
-  """ 
-  Generate separate protein graphs for train and validation.
-  This class save generated graph data and avoid regenerating them.
-  """
-  start_time = time.time()
-  graph_data = Graph_Data_Generator(args)
-  graph_data.graph_data_files_generator()
-  print("--- %s seconds for generating graph data files. ---" %(time.time() - start_time))
+  logger.success(f"Generating features and tasks files from raw data completed in {time.time() - start_time} seconds.")
 
 if __name__ == "__main__":
   main()

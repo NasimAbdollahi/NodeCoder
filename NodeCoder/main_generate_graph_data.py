@@ -4,8 +4,9 @@ import numpy as np
 import random
 import multiprocessing
 import time
-from utils.parser import parameter_parser
-from utils.utils import tab_printer
+from utilities.parser import parameter_parser
+from utilities.utils import tab_printer
+from utilities.config import logger
 from graph_generator.graph_data_generator import Graph_Data_Generator
 
 
@@ -63,7 +64,7 @@ def main():
   for process in processes:
     process.join()
 
-  print("--- %s seconds for generating all graph data files. ---" %(time.time() - start_time))
+  logger.success(f"Generating all graph data files completed in {time.time() - start_time} seconds.")
 
 if __name__ == "__main__":
   main()
