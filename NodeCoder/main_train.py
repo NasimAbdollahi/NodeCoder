@@ -3,13 +3,14 @@ import torch
 import numpy as np
 import random
 import time
-from utils.parser import parameter_parser
-from graph_data_generator import Graph_Data_Generator
+from utilities.parser import parameter_parser
 from graph_generator.clustering import Clustering
 from gcn.NodeCoder import NodeCoder_Model
 from gcn.NodeCoder_train import NodeCoder_Trainer
-from utils.utils import colors, tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, DownSampling, \
+from utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, DownSampling, \
   optimum_epoch, csv_writter_performance_metrics, csv_writer_prediction, plot_performance_metrics
+from utilities.config import logger
+
 
 def main():
   """
@@ -42,22 +43,14 @@ def main():
   torch.cuda.manual_seed(args.seed)
   torch.backends.cudnn.deterministic = True
 
-  """ 
-  Generate separate protein graphs for train and validation.
-  This class save generated graph data and avoid regenerating them.
-  """
-  start_time = time.time()
-  Graph_Data = Graph_Data_Generator(args)
-  Graph_Data.graph_data_files_generator()
-  print("--- %s seconds for generating graph data files. ---" %(time.time() - start_time))
-
   """ Create NodeCoder Model. """
   NodeCoder_Network = NodeCoder_Model(args)
+  logger.success("NodeCoder architecture initialization done.")
 
   """ train on multiple folds: Cross Validation """
   for i in range(0, args.cross_validation_fold_number):
     start_time = time.time()
-    print(colors.HEADER + "\n--- clustering graphs in fold %s started ..." %(i+1) + colors.ENDC)
+    logger.info(f"Clustering graphs in fold {i+1} started...")
     train_graph = graph_reader(args.train_edge_path[i])
     train_features = feature_reader(args.train_features_path[i], args.train_edge_path[i], args.centrality_feature)
     train_edge_features = edge_feature_reader(args.train_edge_feature_path[i])
@@ -66,7 +59,7 @@ def main():
       train_graph, train_features, train_edge_features, train_target = DownSampling(args, train_graph, train_features, train_edge_features, train_target)
     train_clustered = Clustering(args, args.train_protein_filename_path[i], train_graph, train_features, train_edge_features, train_target, cluster_number=args.train_cluster_number)
     train_clustered.decompose()
-    print("--- %s seconds for clustering train graph ---" %((time.time() - start_time)))
+    logger.info(f"Clustering train graph completed in {(time.time() - start_time)} seconds.")
 
     start_time = time.time()
     validation_graph = graph_reader(args.validation_edge_path[i])
@@ -75,27 +68,27 @@ def main():
     validation_target = target_reader(args.validation_target_path[i], args.target_name)
     validation_clustered = Clustering(args, args.validation_protein_filename_path[i], validation_graph, validation_features, validation_edge_features, validation_target, cluster_number=args.validation_cluster_number)
     validation_clustered.decompose()
-    print("--- %s seconds for clustering validation graph ---" %((time.time() - start_time)))
+    logger.info(f"Clustering validation graph completed in {(time.time() - start_time)} seconds.")
 
-    print(colors.HEADER + "\n--- training NodeCoder on fold %s started ... " %(i+1) + colors.ENDC)
+    logger.info(f"Training NodeCoder on fold {i+1} started ...")
     trainer = NodeCoder_Trainer(args, NodeCoder_Network.model, train_clustered, validation_clustered, i)
     trainer.train()
-    print(colors.HEADER + "\n--- training NodeCoder on fold %s completed. ---" %(i+1) + colors.ENDC)
-    print(colors.HEADER + "\n--- Performance metrics are being saved to disk. ---" + colors.ENDC)
+    logger.success(f"Training NodeCoder on fold {i+1} completed.")
+    logger.info("Performance metrics are being saved to disk ...")
     csv_writter_performance_metrics(trainer, i)
 
     """ 
     Now we find the optimum epoch and load the optimum trained model that is saved using checkpoints.
     Then run inference to regenerate the final predicted labels and calculate prediction scores per protein.
     """
-    print(colors.HEADER + "\n--- Running inference on validation fold %s with model saved at optimum epoch ... " %(i+1) + colors.ENDC)
+    logger.info(f"Running inference on validation fold {i+1} with model saved at optimum epoch ...")
     checkpoint_epoch = optimum_epoch(args.Metrics_path[i])
     inference = NodeCoder_Trainer(args, NodeCoder_Network.model, train_clustered, validation_clustered, i, checkpoint_epoch)
     inference.test()
-    print(colors.HEADER + "\n--- Inference completed. ---" + colors.ENDC)
-    print(colors.HEADER + "\n--- Calculating and writing prediction scores per protein ... " + colors.ENDC)
+    logger.success(f"Inference for on fold {i+1} completed.")
+    logger.info("Calculating and writing prediction scores per protein ...")
     csv_writer_prediction(Task, inference.validation_targets, inference.validation_predictions, inference.validation_predictions_prob, args.validation_node_proteinID_path[i], args.Prediction_fileName[i])
-    print(colors.HEADER + "\n--- Model is successfully trained and prediction scores are saved! --- " + colors.ENDC)
+    logger.success(f"Model is successfully trained on fold {i+1} and prediction scores are saved!")
 
   plot_performance_metrics(args)
 
