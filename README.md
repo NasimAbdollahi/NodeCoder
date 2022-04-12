@@ -7,7 +7,7 @@
 
 
 A PyTorch implementation of **NodeCoder Pipeline**, a Graph Convolutional Network (GCN) model for protein residue characterization. 
-This work was presented at **NeurIPS MLSB 2021**: *Residue characterization on AlphaFold2 protein structures using graph neural networks*. [link to the paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
+This work was presented at **NeurIPS MLSB 2021**: *Residue characterization on AlphaFold2 protein structures using graph neural networks*. [link to paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
 
 ## Abstract:
 ```
@@ -21,12 +21,11 @@ each protein in the AlphaFold2 human proteome are generated and used as input re
 (GCN), which annotates specific regions of interest based on the structural attributes of the amino acid residues, including their
 local neighbors. We demonstrate the approach using six varied amino acid classification tasks.
 ```
-
 <img src="/figures/NodeCoder_Pipeline.png" width = "1070">
 
 
 ## Table of Contents
-🧬 [ What does the NodeCoder Pipeline do? ](#u1)<br>
+🧬 [ What does NodeCoder Pipeline do? ](#u1)<br>
 ⚙️ [ Installing NodeCoder ](#u2)<br>
 🔌 [ NodeCoder Usage ](#u3)<br>
 🗄️ [ Graph data files ](#u4)<br> 
@@ -39,7 +38,7 @@ local neighbors. We demonstrate the approach using six varied amino acid classif
 ### 🧬 What does the NodeCoder Pipeline do? 
 
 ---
-The NodeCoder Pipeline is a generalized framework that annotates 3D protein structures with predicted tasks such as 
+The NodeCoder is a generalized framework that annotates 3D protein structures with predicted tasks such as 
 binding sites. The NodeCoder model is based on Graph Convolutional Network. NodeCoder generates proteins' graphs from 
 ALphaFold2 augmented proteins' structures where the nodes are the amino acid residues and edges are inter-residue 
 contacts within a preset distance. The NodeCoder model is then trained with generated graph data for users task of 
@@ -106,6 +105,32 @@ $ pip install .
 ---
 NodeCoder package can be employed for train and inference. Here we describe how to use it:
 
+#### 🗂️ Preprocessing raw data
+[link to paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
+NodeCoder uses AlphaFold2 modeled protein structures as input. [AlphaFold protein structure database](https://alphafold.ebi.ac.uk/)
+provides open access to protein structure predictions of human proteome and other key proteins of interest. 
+Prediction labels can be obtained from [BioLip database](https://zhanggroup.org//BioLiP/qsearch_pdb.cgi?pdbid=1h88) and 
+[Uniprot database](https://www.uniprot.org/).
+To extract node features and labels from these databases, NodeCoder has a **featurizer** module. When using NodeCoder, 
+first step after installation is to run the featurizer module. This module will create two files for every protein in 
+the selected proteome: <font color='#D55E00'> *.features.csv </font> and <font color='#D55E00'> *.tasks.csv </font> . 
+These files are saved in <font color='#D55E00'> NodeCoder/data/input_data/featurized_data/TAX_ID/ </font> 
+directory in separate folders of <font color='#D55E00'> features </font> and <font color='#D55E00'> tasks </font>. 
+The command line to run the featurizer module is:
+```
+$ python NodeCoder/main_preprocess_raw_data.py
+```  
+
+#### 🗃️ Generate graph data
+The next step after running the featurizer is to generate graph data from the features and tasks files. NodeCoder has a 
+graph-generator module that generate protein graph data by taking a threshold for distance between 
+amino acid residues. The threshold distance is required to be defined by user in Angstrom unit to create the graph contact
+network, `threshold_dist = 5`. Graph data files are saved in this directory <font color='#D55E00'> ./data/input_data/graph_data_*A/ </font>.
+The command line to run the graph generator module is:
+```
+$ python NodeCoder/main_generate_graph_data.py
+```  
+
 #### 🧠 Train NodeCoder
 To train NodeCoder's graph-based model, user needs to run `main_train.py` script.
 Script `parser.py` has the model parameters used for training the model.
@@ -147,9 +172,9 @@ need to first train the model then use this pipeline for prediction.
 ### 🗄️ Graph data files
 
 ---
-When graph data is generated from raw data, files are saved in this directory <font color='#D55E00'> ./data/ </font>. 
-Specific sub-directories are created depends on user choice of cutoff distance for protein contact network. This helps user 
-to keep track of different test cases.
+When graph data is generated from featurized data, files are saved in this directory <font color='#D55E00'> ./data/input_data/graph_data_*A/ </font>. 
+Specific sub-directories are created depends on user choice of cutoff distance for protein contact network, proteom, 
+number of cross-validation folds. This helps user to keep track of different test cases.
 
 <details open>
 <summary> Generated graph data files includes: </summary>
@@ -234,7 +259,7 @@ Amino Acid Residue (AA) feature vector:
 ### 📂 Output files
 
 ---
-All output files are saved in this directory <font color='#D55E00'> ./results/ </font>. Specific sub-directories are created
+All output files are saved in this directory <font color='#D55E00'> ./results/graph_*A/ </font>. Specific sub-directories are created
 according to model parameters, so that user can keep track of different test cases.
 
 #### When training NodeCoder
