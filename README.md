@@ -49,6 +49,8 @@ the database, input graph data files are created from the AlphaFold2 protein str
 structure-based and sequence-based residue features. The input graph data will then be given to the trained model for 
 prediction of multiple tasks of interest such as binding sites or post-translational modifications.
 
+<img src="/figures/NodeCoder_FunctionBlocks.png" width = "950">
+
 <a name="u2"></a>
 ### ⚙️ Installing NodeCoder 
 
@@ -69,6 +71,10 @@ torch_spline_conv  1.2.0
 torch-geometric    1.7.0  
 scikit-learn       0.24.2
 matplotlib         3.3.3
+biopython          1.77
+freesasa           2.0.5.post2
+loguru             0.6.0
+
 ```
 #### Installation steps
 Here is the step-by-step NodeCoder installation process:
@@ -78,15 +84,18 @@ Terminal run the following command line:
 ```
 $ conda create -n NodeCoder_env python=3.8
 ```
-
-2. Make sure your virtual environment is active, then go to directory where the NodeCoder package is saved:
+2. Clone the repository:
 ```
-$ cd ~/NodeCoder
+$ git clone https://github.com/NasimAbdollahi/NodeCoder.git
+```
+3. Make sure your virtual environment is active. For conda environment you can use this command line: 
+```
 $ conda activate NodeCoder_env
 ```
 
-3. Now install NodeCoder package. The following command line will install all dependecies in the conda environment you 
-created in step 1: 
+3. Make sure you are in the root directory of the NodeCoder package `~/NodeCoder/` (where setup.py is). 
+Now install NodeCoder package with following command line, which will install all dependencies in the python environment
+you created in step 1:
 ```
 $ pip install .
 ```
