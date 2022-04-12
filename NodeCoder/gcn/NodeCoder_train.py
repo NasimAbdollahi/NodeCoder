@@ -94,7 +94,7 @@ class NodeCoder_Trainer(object):
         targets and predictions of clusters are concatenated for each task,
         They will be used later for calculating metrics.
         """
-        macro_nodes = self.train_clustered.sg_nodes[cluster].to(self.device)
+        #macro_nodes = self.train_clustered.sg_nodes[cluster].to(self.device)
         train_nodes = self.train_clustered.sg_train_nodes[cluster].to(self.device)
         features = self.train_clustered.sg_features[cluster].to(self.device)
         edges = self.train_clustered.sg_edges[cluster].to(self.device)
@@ -185,7 +185,7 @@ class NodeCoder_Trainer(object):
         :return prediction: Prediction matrix with probabilities.
         :return target: Target vector.
         """
-        macro_nodes = validation_clustered.sg_nodes[cluster].to(self.device)
+        #macro_nodes = validation_clustered.sg_nodes[cluster].to(self.device)
         validation_nodes = validation_clustered.sg_train_nodes[cluster].to(self.device)
         edges = validation_clustered.sg_edges[cluster].to(self.device)
         features = validation_clustered.sg_features[cluster].to(self.device)

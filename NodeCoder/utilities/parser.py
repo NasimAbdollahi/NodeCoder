@@ -37,7 +37,7 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     parser.add_argument("--path-featurized-data",
                         nargs="?",
                         default="../data/input_data/featurized_data/%s/"%TAX_ID,
-                        help="Featurized Data Path.")                    
+                        help="Featurized Data Path.")
     parser.add_argument("--path-featurized-data-tasks",
                         nargs="?",
                         default="../data/input_data/featurized_data/%s/tasks/"%TAX_ID,
@@ -92,15 +92,15 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         help="Number of validation clusters extracted. Default is 10.")
     parser.add_argument("--epochs",
                         type=int,
-                        default=20,
+                        default=2000,
 	                    help="Number of training epochs. Default is 200.")
     parser.add_argument("--PerformanceStep",
                         type=int,
-                        default=4,
+                        default=50,
                         help="Epochs where performance metrics are calculated. Must be greater than one. Default is 10.")
     parser.add_argument("--CheckPointStep",
                         type=int,
-                        default=4,
+                        default=50,
                         help="Epochs where calculated model weights and metrics are saved. Default is 10.")
     parser.add_argument("--seed",
                         type=int,
@@ -187,11 +187,11 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
         parser.set_defaults(protein_prediction_fileName='%s%s' %(args.path_protein_results, prediction_fileName))
 
     if args.NodeCoder_usage == 'train':
+        hidden_layers = '_'.join([str(l) for l in args.input_layers])
         if args.multi_task_learning == 'No':
-            hidden_layers = '_'.join([str(l) for l in args.input_layers])
             filename = args.target_name[0]+'_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
         else:
-            filename = str(len(args.target_name))+'Targets_HiddenLayers_'+str(args.input_layers)+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
+            filename = str(len(args.target_name))+'Targets_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
 
         CheckPoint_path, Metrics_path, Metrics_tasks_path, Metrics_clusters_tasks_path, Prediction_fileName, Prediction_Metrics_fileName = [], [], [], [], [], []
         for i in range(0, args.cross_validation_fold_number):
@@ -217,8 +217,9 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
 
     else:
         CheckPoint_path, Metrics_path, Prediction_fileName, Prediction_Metrics_fileName = [], [], [], [],
+        hidden_layers = '_'.join([str(l) for l in args.input_layers])
         for t in args.target_name:
-            filename = t+'_HiddenLayers_'+str(args.input_layers)+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
+            filename = t+'_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
             filename_CheckPoint = filename + '/CheckPoints/Fold'+str(protein_fold_number)+'/'
             filename_Metrics = filename + '/Model_Performance_Metrics_Fold'+str(protein_fold_number)+'.csv'
             CheckPoint_path.append('%s%s' %(args.path_results, filename_CheckPoint))
