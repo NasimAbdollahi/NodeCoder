@@ -28,7 +28,7 @@ def main():
   Here you need to specify:
   Threshold distance in Angstrom (A) for creating graph contact network
   """
-  threshold_dist = 3
+  threshold_dist = 5
 
   """ default is single-task learning unless it is specified! """
   args = parameter_parser(NodeCoder_usage='graph_data_generation', TAX_ID=TAX_ID, PROTEOME_ID=PROTEOME_ID,

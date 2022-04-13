@@ -26,7 +26,7 @@ class Graph_Data_Generator(object):
         """
         Creates a list of all protein files with known 3D structures.
         """
-        if not os.path.exists(self.args.path_raw_data+self.args.KnownProteins_filename):
+        if not os.path.exists(self.args.path_featurized_data+self.args.KnownProteins_filename):
             protein_files = glob.glob(self.args.path_featurized_data+'/tasks/*.tasks.csv')
             known_protein_files = []
             node_num = []
@@ -136,7 +136,7 @@ class Graph_Data_Generator(object):
             os.makedirs(self.args.path_protein_results, exist_ok=True)
             protein_tasks_filename = [self.args.protein_ID + '.tasks.csv']
             protein_features_filename = [self.args.protein_ID + '.features.csv']
-            protein_graph = protein_graph_generator(self.args.path_raw_data, protein_tasks_files=protein_tasks_filename, protein_features_files=protein_features_filename,
+            protein_graph = protein_graph_generator(self.args.path_featurized_data, protein_tasks_files=protein_tasks_filename, protein_features_files=protein_features_filename,
                                                     target_output=self.args.graph_data_targets_name, threshold_distance=self.args.threshold_dist)
             protein_graph.main()
             csv_writter_graph_data(protein_graph, self.args.protein_ID, self.args.graph_data_targets_name, self.args.path_protein_results)

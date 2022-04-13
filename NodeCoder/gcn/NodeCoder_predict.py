@@ -14,7 +14,7 @@ class NodeCoder_Predictor(object):
         :param args: Arguments object.
         :param train_clustered: clustered graph data of train set
         :param validation_clustered: clustered graph data of validation set
-        """  
+        """
         self.args = args
         self.task_count = task_count
         self.protein_graph_data = protein_graph_data
@@ -47,7 +47,7 @@ class NodeCoder_Predictor(object):
             if hasattr(layer, 'reset_parameters'):
                 logger.info(f"Reset trainable parameters of layer = {layer}")
                 layer.reset_parameters()
-    
+
     def Optimizer(self):
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.learning_rate, betas=self.args.betas)
 
@@ -77,9 +77,18 @@ class NodeCoder_Predictor(object):
         """
         Test is performed.
         """
-        CheckPoint_path = self.args.CheckPoint_path[self.task_count] + 'Model_CheckPoints_epoch' + str(self.prediction_checkpoint_epoch) + '.pt'
+        if self.args.multi_task_learning:
+            CheckPoint_path = self.args.CheckPoint_path[0] + 'Model_CheckPoints_epoch' + str(self.prediction_checkpoint_epoch) + '.pt'
+        else:
+            CheckPoint_path = self.args.CheckPoint_path[self.task_count] + 'Model_CheckPoints_epoch' + str(self.prediction_checkpoint_epoch) + '.pt'
         checkpoint = torch.load(CheckPoint_path)
-        self.model.load_state_dict(checkpoint['model_state_dict'])
+        try:
+            self.model.load_state_dict(checkpoint['model_state_dict'])
+        except RuntimeError:
+            logger.critical("saved trained model have a different architecture than what is set for inference.")
+            logger.warning("if you trained NodeCoder with centrality_feature=True you will need to set centrality_feature=True"
+                           " when running inefernce.")
+            raise
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         """ Print model's state_dict """
         # logger.info("Model's state_dict:")
@@ -146,12 +155,11 @@ class NodeCoder_Predictor(object):
             except ValueError:
                 self.Recall.append(0)
             try:
-               self.ROCAUC.append(metrics.roc_auc_score(self.protein_targets[0, Protein[i]].cpu().reshape(-1, 1), self.protein_predictions_prob[0, Protein[i]].cpu().reshape(-1, 1)))
+                self.ROCAUC.append(metrics.roc_auc_score(self.protein_targets[0, Protein[i]].cpu().reshape(-1, 1), self.protein_predictions_prob[0, Protein[i]].cpu().reshape(-1, 1)))
             except ValueError:
-               self.ROCAUC.append(0)
+                self.ROCAUC.append(0)
             try:
-               precision, recall, thresholds = metrics.precision_recall_curve(self.protein_targets[0, Protein[i]].cpu().reshape(-1, 1), self.protein_predictions_prob[0, Protein[i]].cpu().reshape(-1, 1))
-               self.PRAUC.append(metrics.auc(recall, precision))
+                precision, recall, thresholds = metrics.precision_recall_curve(self.protein_targets[0, Protein[i]].cpu().reshape(-1, 1), self.protein_predictions_prob[0, Protein[i]].cpu().reshape(-1, 1))
+                self.PRAUC.append(metrics.auc(recall, precision))
             except ValueError:
-               self.PRAUC.append(0)
-
+                self.PRAUC.append(0)

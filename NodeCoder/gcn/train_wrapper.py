@@ -39,5 +39,5 @@ class Wrapper(object):
         checkpoint_epoch = optimum_epoch(self.args.Metrics_path[i])
         inference = NodeCoder_Trainer(self.args, self.NodeCoder_Network.model, train_clustered, validation_clustered, i, checkpoint_epoch)
         inference.test()
-        csv_writer_prediction(self.args.target_name, inference.validation_targets, inference.validation_predictions,
+        csv_writer_prediction(self.args.NodeCoder_usage, self.args.target_name, inference.validation_targets, inference.validation_predictions,
                               inference.validation_predictions_prob, self.args.validation_node_proteinID_path[i], self.args.Prediction_fileName[i])

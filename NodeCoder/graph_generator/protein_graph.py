@@ -162,8 +162,8 @@ class protein_graph_generator(object):
     protein_count = 0
     zero_count = 0
     for i in range(0, len(self.protein_tasks_files)):
-      tasks_frame = pd.read_csv(self.path_data+'/tasks/'+self.protein_tasks_files[i])
-      features_frame = pd.read_csv(self.path_data+'/features/'+self.protein_features_files[i])
+      tasks_frame = pd.read_csv(self.path_data+'tasks/'+self.protein_tasks_files[i])
+      features_frame = pd.read_csv(self.path_data+'features/'+self.protein_features_files[i])
       protein_frame = pd.concat([features_frame, tasks_frame.drop(['Unnamed: 0', 'annotation_sequence'], axis=1)], axis=1)
       """ Data Sanity Check: Counting NaNs and removing them """
       NaN_Count = len(tasks_frame) - tasks_frame.count()

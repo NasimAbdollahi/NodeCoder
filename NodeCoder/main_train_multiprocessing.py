@@ -37,8 +37,15 @@ def main():
   Task = ['y_Ligand']
   threshold_dist = 5
 
-  """ default is single-task learning unless it is specified! """
-  args = parameter_parser(NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning=False, Task=Task)
+  """ 
+  Default is single-task learning unless it is specified! 
+  You can train NodeCoder for different tasks separately, which is recommended. In this case, only one task is given:
+  Task = ['y_Ligand'] and multi_task_learning=False.
+  Or you can choose multi-task learning setup by giving more tasks as Task = ['y_Ligand', 'y_Peptide'] and setting 
+  multi_task_learning=True.
+  """
+  args = parameter_parser(NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning=False, Task=Task,
+                          centrality_feature=True)
   tab_printer(args)
 
   """ 

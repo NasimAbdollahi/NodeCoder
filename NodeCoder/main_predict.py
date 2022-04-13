@@ -8,8 +8,7 @@ from graph_generator.graph_data_generator import Graph_Data_Generator
 from graph_generator.clustering import Clustering
 from gcn.NodeCoder import NodeCoder_Model
 from gcn.NodeCoder_predict import NodeCoder_Predictor
-from utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch,\
-    csv_writer_prediction
+from utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch, csv_writer_prediction
 from utilities.config import logger
 
 
@@ -28,13 +27,19 @@ def main():
     Threshold distance for creating graph contact network
     """
     protein_ID = 'KI3L1_HUMAN'
-    protein_fold_number = 3
-    Task = ['y_Ligand', 'y_Inorganic', 'y_MOD_RES']
+    protein_fold_number = 2
+    Task = ['y_Ligand', 'y_TRANSMEM']
     threshold_dist = 5
 
-    """ When using NodeCoder to predict protein functions, default is loading trained model with single-task learning setup! """
+    """ 
+    When using NodeCoder to predict protein functions, default is loading trained model with single-task learning setup!
+    Option 1: use NodeCoder for predicting different tasks using models that are trained separately, which is recommended. 
+    In this case, you specify the tasks of interest as Task = ['y_Ligand', 'y_Peptide'] and multi_task_learning=False.
+    Option 2: use a single trained model with multi-task learning setup by for your tasks of interest, e.g. 
+    Task = ['y_Ligand', 'y_Peptide'] and set multi_task_learning=True. 
+    """
     args = parameter_parser(NodeCoder_usage='predict', Task=Task, protein_ID=protein_ID, protein_fold_number=protein_fold_number,
-                            threshold_dist=threshold_dist, centrality_feature=False)
+                            threshold_dist=threshold_dist, centrality_feature=True, multi_task_learning=False)
     tab_printer(args)
 
     """ 
@@ -75,23 +80,35 @@ def main():
     TrueLabel = []
     PredictedLabel = []
     PredictedProb = []
-    for t in range(0, len(Task)):
-        logger.info(f"Prediction with trained NodeCoder for {Task[t].split('_')[-1]} started ...")
+    if args.multi_task_learning:
+        logger.info(f"Inference with trained NodeCoder (with multi-task learning setting) started ...")
         """ using the saved checkpoint to run inference with trained model """
-        """ find the optimum epoch for reading the trained  model: """
-        checkpoint_epoch = optimum_epoch(args.Metrics_path[t])
-        logger.info(f"Best epoch - trained NodeCoder for task {Task[t]}: {checkpoint_epoch}")
-        predictor = NodeCoder_Predictor(args, NodeCoder_Network.model, protein_graph_data, t, checkpoint_epoch)
-        predictor.test()
-
-        TrueLabel.append(list(predictor.targets))
-        PredictedLabel.append(list(predictor.predictions))
-        PredictedProb.append(list(predictor.predictions_prob))
+        """ find the optimum epoch for reading the trained model with multi-task learning setting: """
+        checkpoint_epoch = optimum_epoch(args.Metrics_path[0])
+        logger.info(f"Best epoch - trained NodeCoder with multi-task learning setting: {checkpoint_epoch}")
+        for t in range(0, len(Task)):
+            predictor = NodeCoder_Predictor(args, NodeCoder_Network.model, protein_graph_data, t, checkpoint_epoch)
+            predictor.test()
+            TrueLabel.append(list(predictor.targets))
+            PredictedLabel.append(list(predictor.predictions))
+            PredictedProb.append(list(predictor.predictions_prob))
+    else:
+        for t in range(0, len(Task)):
+            logger.info(f"Inference with trained NodeCoder for {Task[t].split('_')[-1]} started ...")
+            """ using the saved checkpoint to run inference with trained model """
+            """ find the optimum epoch for reading the trained model: """
+            checkpoint_epoch = optimum_epoch(args.Metrics_path[t])
+            logger.info(f"Best epoch - trained NodeCoder for task {Task[t]}: {checkpoint_epoch}")
+            predictor = NodeCoder_Predictor(args, NodeCoder_Network.model, protein_graph_data, t, checkpoint_epoch)
+            predictor.test()
+            TrueLabel.append(list(predictor.targets))
+            PredictedLabel.append(list(predictor.predictions))
+            PredictedProb.append(list(predictor.predictions_prob))
 
     """ Writing predicted and target labels """
     logger.info("Writing predicted labels ...")
-    csv_writer_prediction(Task, TrueLabel, PredictedLabel, PredictedProb, args.protein_node_proteinID_path, args.protein_prediction_fileName)
-    logger.success("Prediction is successfully completed.")
+    csv_writer_prediction(args.NodeCoder_usage, Task, TrueLabel, PredictedLabel, PredictedProb, args.protein_node_proteinID_path, args.protein_prediction_fileName)
+    logger.success("Inference is successfully completed.")
 
 if __name__ == "__main__":
     main()

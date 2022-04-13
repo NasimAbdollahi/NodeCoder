@@ -92,15 +92,15 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         help="Number of validation clusters extracted. Default is 10.")
     parser.add_argument("--epochs",
                         type=int,
-                        default=2000,
+                        default=400,
 	                    help="Number of training epochs. Default is 200.")
     parser.add_argument("--PerformanceStep",
                         type=int,
-                        default=50,
+                        default=5,
                         help="Epochs where performance metrics are calculated. Must be greater than one. Default is 10.")
     parser.add_argument("--CheckPointStep",
                         type=int,
-                        default=50,
+                        default=5,
                         help="Epochs where calculated model weights and metrics are saved. Default is 10.")
     parser.add_argument("--seed",
                         type=int,
@@ -188,10 +188,10 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
 
     if args.NodeCoder_usage == 'train':
         hidden_layers = '_'.join([str(l) for l in args.input_layers])
-        if args.multi_task_learning == 'No':
-            filename = args.target_name[0]+'_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
-        else:
+        if args.multi_task_learning:
             filename = str(len(args.target_name))+'Targets_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
+        else:
+            filename = args.target_name[0]+'_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
 
         CheckPoint_path, Metrics_path, Metrics_tasks_path, Metrics_clusters_tasks_path, Prediction_fileName, Prediction_Metrics_fileName = [], [], [], [], [], []
         for i in range(0, args.cross_validation_fold_number):

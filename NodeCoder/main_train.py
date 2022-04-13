@@ -22,12 +22,18 @@ def main():
   """ 
   Here you need to specify:
   Tasks of interest
-  Threshold distance in Angstrom (A) for creating graph contact network
+  Threshold distance in Angstrom (A) for creating graph contact network 
   """
-  Task = ['y_Ligand']
+  Task = ['y_TRANSMEM']
   threshold_dist = 5
 
-  """ default is single-task learning unless it is specified! """
+  """ 
+  Default is single-task learning unless it is specified! 
+  You can train NodeCoder for different tasks separately, which is recommended. In this case, only one task is given:
+  Task = ['y_Ligand'] and multi_task_learning=False.
+  Or you can choose multi-task learning setup by giving more tasks as Task = ['y_Ligand', 'y_Peptide'] and setting 
+  multi_task_learning=True.
+  """
   args = parameter_parser(NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning=False,
                           Task=Task, centrality_feature=True)
   tab_printer(args)
@@ -85,9 +91,9 @@ def main():
     checkpoint_epoch = optimum_epoch(args.Metrics_path[i])
     inference = NodeCoder_Trainer(args, NodeCoder_Network.model, train_clustered, validation_clustered, i, checkpoint_epoch)
     inference.test()
-    logger.success(f"Inference for on fold {i+1} completed.")
+    logger.success(f"Inference for fold {i+1} completed.")
     logger.info("Calculating and writing prediction scores per protein ...")
-    csv_writer_prediction(Task, inference.validation_targets, inference.validation_predictions, inference.validation_predictions_prob, args.validation_node_proteinID_path[i], args.Prediction_fileName[i])
+    csv_writer_prediction(args.NodeCoder_usage, Task, inference.validation_targets, inference.validation_predictions, inference.validation_predictions_prob, args.validation_node_proteinID_path[i], args.Prediction_fileName[i])
     logger.success(f"Model is successfully trained on fold {i+1} and prediction scores are saved!")
 
   plot_performance_metrics(args)

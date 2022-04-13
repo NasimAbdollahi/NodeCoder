@@ -199,7 +199,7 @@ def optimum_epoch(path):
   if best_epoch == 0:
     logger.warning("NodeCoder is not learning: best epoch is found to be the first epoch. You need to increase training "
                    "epoch or change model parameters...!!!!!")
-    exit()
+    # exit()
   return best_epoch
 
 def Positive_Expansion(graph, target):
@@ -361,7 +361,7 @@ def csv_writer_prediction_score_perprotein(Results, i):
 #     DataFrame = pd.concat([DataFrame, DF], axis=1)
 #   DataFrame.to_csv(Prediction_fileName, index=False)
 
-def csv_writer_prediction(tasks, target, predictions, predictions_prob, proteinID_path, path_to_save):
+def csv_writer_prediction(NodeCoder_usage, tasks, target, predictions, predictions_prob, proteinID_path, path_to_save):
   """
   Writing the final prediction to disk, csv file.
   """
@@ -376,11 +376,20 @@ def csv_writer_prediction(tasks, target, predictions, predictions_prob, proteinI
   firstrow = []
   firstrow.extend([t+' Target', t+' Prediction', t+' Prediction Probability'] for t in Tasks)
   Columns = [j for i in firstrow for j in i]
-  if len(Tasks) == 1:
-    Rows = [np.array(target[0].cpu()).squeeze(), np.array(predictions[0].cpu()).squeeze(), np.array(predictions_prob[0].cpu()).squeeze()]
-  else:
-    Rows0 = [[np.array(target[i][0].cpu()).squeeze(), np.array(predictions[i][0].cpu()).squeeze(), np.array(predictions_prob[i][0].cpu()).squeeze()] for i in range(0, len(Tasks))]
-    Rows = [j for i in Rows0 for j in i]
+
+  if NodeCoder_usage == 'train':
+    if len(Tasks) == 1:
+      Rows = [np.array(target[0].cpu()).squeeze(), np.array(predictions[0].cpu()).squeeze(), np.array(predictions_prob[0].cpu()).squeeze()]
+    else:
+      Rows0 = [[np.array(target[i].cpu()).squeeze(), np.array(predictions[i].cpu()).squeeze(), np.array(predictions_prob[i].cpu()).squeeze()] for i in range(0, len(Tasks))]
+      Rows = [j for i in Rows0 for j in i]
+  elif NodeCoder_usage == 'predict':
+    if len(Tasks) == 1:
+      Rows = [np.array(target[0][0].cpu()).squeeze(), np.array(predictions[0][0].cpu()).squeeze(), np.array(predictions_prob[0][0].cpu()).squeeze()]
+    else:
+      Rows0 = [[np.array(target[i][0].cpu()).squeeze(), np.array(predictions[i][0].cpu()).squeeze(), np.array(predictions_prob[i][0].cpu()).squeeze()] for i in range(0, len(Tasks))]
+      Rows = [j for i in Rows0 for j in i]
+
   """ To include the protein ID  """
   prediction_DataFrame = pd.read_csv(proteinID_path)
   for i in range(0, len(Columns)):

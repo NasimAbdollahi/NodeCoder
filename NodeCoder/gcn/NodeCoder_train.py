@@ -310,8 +310,9 @@ class NodeCoder_Trainer(object):
         CheckPoint_path = self.args.CheckPoint_path[self.fold] + 'Model_CheckPoints_epoch' + str(self.prediction_checkpoint_epoch) + '.pt'
         try:
             checkpoint = torch.load(CheckPoint_path)
-        except:
-            logger.warning("Looks like the model is not trained yet. Change parameters and train again...!!!!!")
+        except FileNotFoundError:
+            logger.warning("Looks like the model is not trained yet. The best epoch is found to be the first epoch. "
+                           "Change parameters and train again...!!!!!")
             exit()
         self.model.load_state_dict(checkpoint['model_state_dict'])
         self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
