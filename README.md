@@ -113,7 +113,7 @@ Prediction labels can be obtained from [BioLip database](https://zhanggroup.org/
 [Uniprot database](https://www.uniprot.org/).
 To extract node features and labels from these databases, NodeCoder has a **featurizer** module. When using NodeCoder, 
 first step after installation is to run the featurizer module. This module will create two files for every protein in 
-the selected proteome: ==*.features.csv== and <font color='#D55E00'> *.tasks.csv </font> . 
+the selected proteome: <font color='#D55E00'> *.features.csv </font> and <font color='#D55E00'> *.tasks.csv </font> . 
 These files are saved in <font color='#D55E00'> NodeCoder/data/input_data/featurized_data/TAX_ID/ </font> 
 directory in separate folders of <font color='#D55E00'> features </font> and <font color='#D55E00'> tasks </font>. 
 The command line to run the featurizer module is: 
