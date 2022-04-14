@@ -1,7 +1,7 @@
 import argparse
 
 def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
-                     protein_ID:str='NA', protein_fold_number:int=0, threshold_dist:int=5, multi_task_learning:bool=False,
+                     protein_ID:str='NA', trained_model_fold_number:int=1, threshold_dist:int=5, multi_task_learning:bool=False,
                      centrality_feature:bool=False):
     """
     A method to parse up command line parameters. By default it trains on the PubMed dataset.
@@ -46,11 +46,15 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         nargs="?",
                         default="../data/input_data/featurized_data/%s/features/"%TAX_ID,
                         help="Featurized Data Path (Features).")
+    parser.add_argument("--path-test-featurized-data",
+                        nargs="?",
+                        default="../data/test_data/featurized_data/%s/"%TAX_ID,
+                        help="Test Data Path.")
 
     parser.set_defaults(threshold_dist=threshold_dist)
     parser.add_argument("--cross-validation-fold-number",
                         type=int,
-                        default=3,
+                        default=5,
                         help="Number of folds for cross-validation.")
     args = parser.parse_args()
     parser.set_defaults(KnownProteins_filename='KnownProteinFiles.csv')
@@ -69,7 +73,7 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
 
     parser.set_defaults(multi_task_learning=multi_task_learning)
     parser.set_defaults(protein_ID=protein_ID)
-    parser.set_defaults(protein_fold_number=protein_fold_number)
+    parser.set_defaults(trained_model_fold_number=trained_model_fold_number)
     parser.set_defaults(graph_data_targets_name=['y_CHAIN', 'y_TRANSMEM', 'y_MOD_RES',
                                                  'y_ACT_SITE', 'y_NP_BIND', 'y_LIPID', 'y_CARBOHYD', 'y_DISULFID',
                                                  'y_VARIANT', 'y_Artifact', 'y_Peptide', 'y_Nucleic', 'y_Inorganic',
@@ -81,7 +85,7 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     parser.add_argument("--clustering-method",
                         nargs="?",
                         default="Physical", #"Physical", "metis", "random"
-	                    help="Clustering method for graph decomposition. Default is the Physical procedure.")
+                        help="Clustering method for graph decomposition. Default is the Physical procedure.")
     parser.add_argument("--train-cluster-number",
                         type=int,
                         default=1,
@@ -92,28 +96,28 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         help="Number of validation clusters extracted. Default is 10.")
     parser.add_argument("--epochs",
                         type=int,
-                        default=400,
-	                    help="Number of training epochs. Default is 200.")
+                        default=10000,
+                        help="Number of training epochs. Default is 200.")
     parser.add_argument("--PerformanceStep",
                         type=int,
-                        default=5,
+                        default=50,
                         help="Epochs where performance metrics are calculated. Must be greater than one. Default is 10.")
     parser.add_argument("--CheckPointStep",
                         type=int,
-                        default=5,
+                        default=50,
                         help="Epochs where calculated model weights and metrics are saved. Default is 10.")
     parser.add_argument("--seed",
                         type=int,
                         default=10,
-	                    help="Random seed for train-test split. Default is 10.")
+                        help="Random seed for train-test split. Default is 10.")
     parser.add_argument("--dropout",
                         type=float,
                         default=0.5,
-	                    help="Dropout parameter. Default is 0.5.")
+                        help="Dropout parameter. Default is 0.5.")
     parser.add_argument("--learning-rate",
                         type=float,
                         default=0.01,
-	                    help="Learning rate. Default is 0.01.")
+                        help="Learning rate. Default is 0.01.")
     parser.add_argument("--betas",
                         type=float,
                         default=(0.9, 0.999),
@@ -125,7 +129,7 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     parser.add_argument("--test-ratio",
                         type=float,
                         default=0.01,
-	                    help="Test data ratio. Default is 0.2.")
+                        help="Test data ratio. Default is 0.2.")
     parser.set_defaults(input_layers=[38, 28, 18, 8])
     parser.set_defaults(output_layer_size=8)
 
@@ -218,12 +222,19 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     else:
         CheckPoint_path, Metrics_path, Prediction_fileName, Prediction_Metrics_fileName = [], [], [], [],
         hidden_layers = '_'.join([str(l) for l in args.input_layers])
-        for t in args.target_name:
-            filename = t+'_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
-            filename_CheckPoint = filename + '/CheckPoints/Fold'+str(protein_fold_number)+'/'
-            filename_Metrics = filename + '/Model_Performance_Metrics_Fold'+str(protein_fold_number)+'.csv'
+        if args.multi_task_learning:
+            filename = str(len(args.target_name))+'Targets_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
+            filename_CheckPoint = filename + '/CheckPoints/Fold'+str(trained_model_fold_number)+'/'
+            filename_Metrics = filename + '/Model_Performance_Metrics_Fold'+str(trained_model_fold_number)+'.csv'
             CheckPoint_path.append('%s%s' %(args.path_results, filename_CheckPoint))
             Metrics_path.append('%s%s' %(args.path_results, filename_Metrics))
+        else:
+            for t in args.target_name:
+                filename = t+'_HiddenLayers_'+hidden_layers+'_'+str(args.epochs)+'Epochs_LR'+str(args.learning_rate)
+                filename_CheckPoint = filename + '/CheckPoints/Fold'+str(trained_model_fold_number)+'/'
+                filename_Metrics = filename + '/Model_Performance_Metrics_Fold'+str(trained_model_fold_number)+'.csv'
+                CheckPoint_path.append('%s%s' %(args.path_results, filename_CheckPoint))
+                Metrics_path.append('%s%s' %(args.path_results, filename_Metrics))
         parser.set_defaults(CheckPoint_path=CheckPoint_path)
         parser.set_defaults(Metrics_path=Metrics_path)
 

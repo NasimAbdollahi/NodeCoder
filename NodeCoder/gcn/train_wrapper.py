@@ -13,7 +13,7 @@ class Wrapper(object):
 
     def train_fold(self, i):
         train_graph = graph_reader(self.args.train_edge_path[i])
-        train_features = feature_reader(self.args.train_features_path[i], self.args.train_edge_path[i])
+        train_features = feature_reader(self.args.train_features_path[i], self.args.train_edge_path[i], self.args.centrality_feature)
         train_edge_features = edge_feature_reader(self.args.train_edge_feature_path[i])
         train_target = target_reader(self.args.train_target_path[i], self.args.target_name)
         if self.args.downSampling_majority_class == 'Yes':
@@ -23,7 +23,7 @@ class Wrapper(object):
 
         validation_graph = graph_reader(self.args.validation_edge_path[i])
         validation_edge_features = edge_feature_reader(self.args.validation_edge_feature_path[i])
-        validation_features = feature_reader(self.args.validation_features_path[i], self.args.validation_edge_path[i])
+        validation_features = feature_reader(self.args.validation_features_path[i], self.args.validation_edge_path[i], self.args.centrality_feature)
         validation_target = target_reader(self.args.validation_target_path[i], self.args.target_name)
         validation_clustered = Clustering(self.args, self.args.validation_protein_filename_path[i], validation_graph,
                                           validation_features, validation_edge_features, validation_target, cluster_number=self.args.validation_cluster_number)

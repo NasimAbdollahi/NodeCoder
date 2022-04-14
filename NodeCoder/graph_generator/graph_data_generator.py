@@ -136,7 +136,7 @@ class Graph_Data_Generator(object):
             os.makedirs(self.args.path_protein_results, exist_ok=True)
             protein_tasks_filename = [self.args.protein_ID + '.tasks.csv']
             protein_features_filename = [self.args.protein_ID + '.features.csv']
-            protein_graph = protein_graph_generator(self.args.path_featurized_data, protein_tasks_files=protein_tasks_filename, protein_features_files=protein_features_filename,
+            protein_graph = protein_graph_generator(self.args.path_test_featurized_data, protein_tasks_files=protein_tasks_filename, protein_features_files=protein_features_filename,
                                                     target_output=self.args.graph_data_targets_name, threshold_distance=self.args.threshold_dist)
             protein_graph.main()
             csv_writter_graph_data(protein_graph, self.args.protein_ID, self.args.graph_data_targets_name, self.args.path_protein_results)

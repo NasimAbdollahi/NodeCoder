@@ -27,7 +27,7 @@ def main():
     Threshold distance for creating graph contact network
     """
     protein_ID = 'KI3L1_HUMAN'
-    protein_fold_number = 2
+    trained_model_fold_number = 2
     Task = ['y_Ligand', 'y_TRANSMEM']
     threshold_dist = 5
 
@@ -38,7 +38,7 @@ def main():
     Option 2: use a single trained model with multi-task learning setup by for your tasks of interest, e.g. 
     Task = ['y_Ligand', 'y_Peptide'] and set multi_task_learning=True. 
     """
-    args = parameter_parser(NodeCoder_usage='predict', Task=Task, protein_ID=protein_ID, protein_fold_number=protein_fold_number,
+    args = parameter_parser(NodeCoder_usage='predict', Task=Task, protein_ID=protein_ID, trained_model_fold_number=trained_model_fold_number,
                             threshold_dist=threshold_dist, centrality_feature=True, multi_task_learning=False)
     tab_printer(args)
 

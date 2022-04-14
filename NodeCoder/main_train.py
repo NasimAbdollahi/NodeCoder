@@ -11,7 +11,6 @@ from utilities.utils import tab_printer, graph_reader, feature_reader, edge_feat
   optimum_epoch, csv_writter_performance_metrics, csv_writer_prediction, plot_performance_metrics
 from utilities.config import logger
 
-
 def main():
   """
   Parsing command line parameters, generating graph data, reading saved graph data, graph decomposition,
@@ -22,12 +21,12 @@ def main():
   """ 
   Here you need to specify:
   Tasks of interest
-  Threshold distance in Angstrom (A) for creating graph contact network 
+  Threshold distance in Angstrom (A) for creating graph contact network
   """
-  Task = ['y_TRANSMEM']
+  Task = ['y_Ligand', 'y_TRANSMEM']
   threshold_dist = 5
 
-  """ 
+  """
   Default is single-task learning unless it is specified! 
   You can train NodeCoder for different tasks separately, which is recommended. In this case, only one task is given:
   Task = ['y_Ligand'] and multi_task_learning=False.

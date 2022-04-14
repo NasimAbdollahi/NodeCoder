@@ -154,11 +154,6 @@ def edge_feature_reader(path):
   :param path: Path to the csv file.
   :return features: edge features vector.
   """
-  # node1 = np.array(pd.read_csv(path)["id1"])
-  # node2 = np.array(pd.read_csv(path)["id2"])
-  # edge_length = np.array(pd.read_csv(path)["edge_length"])
-  # edge_seq_distance = np.array(pd.read_csv(path)["edge_sequence_distance"])
-  # edge_features = np.array([edge_length, edge_seq_distance]).transpose()
   try:
     edge_features = np.array(pd.read_csv(path))
   except:
@@ -199,7 +194,7 @@ def optimum_epoch(path):
   if best_epoch == 0:
     logger.warning("NodeCoder is not learning: best epoch is found to be the first epoch. You need to increase training "
                    "epoch or change model parameters...!!!!!")
-    # exit()
+    exit()
   return best_epoch
 
 def Positive_Expansion(graph, target):

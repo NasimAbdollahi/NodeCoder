@@ -18,7 +18,7 @@ class NodeCoder_Trainer(object):
         :param args: Arguments object.
         :param train_clustered: clustered graph data of train set
         :param validation_clustered: clustered graph data of validation set
-        """  
+        """
         self.args = args
         self.fold = fold
         self.TaskNum = np.shape(train_clustered.target)[1]
@@ -111,7 +111,7 @@ class NodeCoder_Trainer(object):
         if epoch in self.Performance_epochs:
             self.prepare_train_results(target, predictions, task_loss, cluster)
         return average_loss, task_loss, node_count
-    
+
     def evaluate_loss(self, predictions, target, nodes):
         """
         Calculating loss for each task and sum for multi-task learning.
@@ -166,7 +166,7 @@ class NodeCoder_Trainer(object):
         self.accumulated_train_task_loss = self.accumulated_train_task_loss + batch_task_loss*node_count
         self.train_node_count_seen = self.train_node_count_seen + node_count
         return
-    
+
     def update_average_validation_loss(self, batch_average_loss, batch_task_loss, node_count):
         """
         Updating (accumulating) the average loss in the epoch.
@@ -201,7 +201,7 @@ class NodeCoder_Trainer(object):
         node_count = validation_nodes.shape[0]
         self.prepare_validation_results(validation_clustered, target, predictions, cluster)
         return average_loss, task_loss, node_count
-    
+
     def train(self):
         """
         Training the model.
@@ -486,7 +486,3 @@ class NodeCoder_Trainer(object):
             except ValueError:
                self.Validation_PRAUC.append(0)
             self.Validation_MCC = metrics.matthews_corrcoef(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1))
-
-
-
-
