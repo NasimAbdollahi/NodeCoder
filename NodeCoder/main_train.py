@@ -34,7 +34,7 @@ def main():
   multi_task_learning=True.
   """
   args = parameter_parser(NodeCoder_usage='train', threshold_dist=threshold_dist, multi_task_learning=False,
-                          Task=Task, centrality_feature=True)
+                          Task=Task, centrality_feature=True, cross_validation_fold_number=5)
   tab_printer(args)
 
   """ 

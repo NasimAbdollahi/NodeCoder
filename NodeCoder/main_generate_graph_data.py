@@ -32,7 +32,7 @@ def main():
 
   """ default is single-task learning unless it is specified! """
   args = parameter_parser(NodeCoder_usage='graph_data_generation', TAX_ID=TAX_ID, PROTEOME_ID=PROTEOME_ID,
-                          threshold_dist=threshold_dist)
+                          threshold_dist=threshold_dist, cross_validation_fold_number=1)
   tab_printer(args)
 
   """ 

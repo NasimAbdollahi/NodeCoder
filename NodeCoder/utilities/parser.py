@@ -1,8 +1,9 @@
 import argparse
 
+
 def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
-                     protein_ID:str='NA', trained_model_fold_number:int=1, threshold_dist:int=5, multi_task_learning:bool=False,
-                     centrality_feature:bool=False):
+                     protein_ID:str='NA', trained_model_fold_number:int=1, threshold_dist:int=5, cross_validation_fold_number:int=5,
+                     multi_task_learning:bool=False, centrality_feature:bool=False):
     """
     A method to parse up command line parameters. By default it trains on the PubMed dataset.
     The default hyperparameters give a good quality representation without grid search.
@@ -52,10 +53,7 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         help="Test Data Path.")
 
     parser.set_defaults(threshold_dist=threshold_dist)
-    parser.add_argument("--cross-validation-fold-number",
-                        type=int,
-                        default=5,
-                        help="Number of folds for cross-validation.")
+    parser.set_defaults(cross_validation_fold_number=cross_validation_fold_number)
     args = parser.parse_args()
     parser.set_defaults(KnownProteins_filename='KnownProteinFiles.csv')
     parser.add_argument("--path-graph-data",
@@ -126,6 +124,11 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         type=str,
                         default='non', # 'non', 'Logarithmic', 'Power_Logarithmic','Linear','Smoothed_Linear' , 'Sigmoid'
                         help="weighted loss scheme.")
+    parser.add_argument("--train-ratio",
+                        type=float,
+                        default=0.8,
+                        help="train data ratio, rest of data will be used for validation when cross-validation is not used."
+                             "Default is 0.8.")
     parser.add_argument("--test-ratio",
                         type=float,
                         default=0.01,

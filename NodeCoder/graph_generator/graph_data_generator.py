@@ -2,10 +2,11 @@ import numpy as np
 import pandas as pd
 import os
 import math
+import random
 import glob
 import time
 from NodeCoder.graph_generator.protein_graph import protein_graph_generator
-from NodeCoder.utilities.utils import colors, csv_writter_known_proteins, csv_writter_grouping_protein, csv_writter_graph_data
+from NodeCoder.utilities.utils import csv_writter_known_proteins, csv_writter_grouping_protein, csv_writter_graph_data
 from NodeCoder.utilities.config import logger
 
 class Graph_Data_Generator(object):
@@ -64,8 +65,12 @@ class Graph_Data_Generator(object):
         In 5fold_CV setting there are 765 proteins in each validation fold.
         """
         protein_filenames = list(self.find_known_proteins()["tasks file"])
-        protein_number_validation = math.floor(len(protein_filenames)/self.args.cross_validation_fold_number)
-        protein_number_train = len(protein_filenames) - protein_number_validation
+        if self.args.cross_validation_fold_number == 1:
+            protein_number_validation = math.floor(len(protein_filenames)*(1-self.args.train_ratio))
+            protein_number_train = len(protein_filenames) - protein_number_validation
+        else:
+            protein_number_validation = math.floor(len(protein_filenames)/self.args.cross_validation_fold_number)
+            protein_number_train = len(protein_filenames) - protein_number_validation
 
         logger.info("Total number of proteins with known 3D structures (from AlphaFold Dec2021Data):")
         logger.info(f"Total number of proteins selected for training:{protein_number_train}")
@@ -75,13 +80,21 @@ class Graph_Data_Generator(object):
         train_protein_filenames = []
         for i in range(0, self.args.cross_validation_fold_number):
             Remained_protein_filenames = list.copy(protein_filenames[0:len(protein_filenames)])
-            if i == self.args.cross_validation_fold_number-1:
-                validation_protein_filenames.append(Remained_protein_filenames[i*protein_number_validation:])
-                del Remained_protein_filenames[i*protein_number_validation:]
+            if self.args.cross_validation_fold_number == 1:
+                """ for no cross-validation case, default is %80 for train and %20 for validation: """
+                random.shuffle(Remained_protein_filenames)
+                validation_protein_filenames.append(Remained_protein_filenames[0:protein_number_validation])
+                del Remained_protein_filenames[0:protein_number_validation]
+                train_protein_filenames.append(Remained_protein_filenames)
             else:
-                validation_protein_filenames.append(Remained_protein_filenames[i*protein_number_validation:(i+1)*protein_number_validation])
-                del Remained_protein_filenames[i*protein_number_validation:(i+1)*protein_number_validation]
-            train_protein_filenames.append(Remained_protein_filenames)
+                """ for cross-validation case: """
+                if i == self.args.cross_validation_fold_number-1:
+                    validation_protein_filenames.append(Remained_protein_filenames[i*protein_number_validation:])
+                    del Remained_protein_filenames[i*protein_number_validation:]
+                else:
+                    validation_protein_filenames.append(Remained_protein_filenames[i*protein_number_validation:(i+1)*protein_number_validation])
+                    del Remained_protein_filenames[i*protein_number_validation:(i+1)*protein_number_validation]
+                train_protein_filenames.append(Remained_protein_filenames)
             """ write csv files: """
             validation_name = 'validation_' + str(i+1)
             train_name = 'train_' + str(i+1)
