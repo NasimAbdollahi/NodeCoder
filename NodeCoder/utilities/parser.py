@@ -1,9 +1,9 @@
 import argparse
 
 
-def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
+def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
                      protein_ID:str='NA', trained_model_fold_number:int=1, threshold_dist:int=5, cross_validation_fold_number:int=5,
-                     multi_task_learning:bool=False, centrality_feature:bool=False):
+                     multi_task_learning:bool=False, centrality_feature:bool=False, epochs:int=1000, weighted_loss:str='non'):
     """
     A method to parse up command line parameters. By default it trains on the PubMed dataset.
     The default hyperparameters give a good quality representation without grid search.
@@ -13,43 +13,43 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     parser.set_defaults(NodeCoder_usage=NodeCoder_usage)
     parser.set_defaults(centrality_feature=centrality_feature)
 
-    parser.set_defaults(TAX_ID='9606')
-    parser.set_defaults(PROTEOME_ID='UP000005640')
+    parser.set_defaults(TAX_ID=TAX_ID)
+    parser.set_defaults(PROTEOME_ID=PROTEOME_ID)
     parser.add_argument("--path-raw-data",
                         nargs="?",
-                        default="../data/raw_data/",
+                        default="./data/raw_data/",
                         help="Raw Data Path.")
     parser.add_argument("--path-raw-data-AlphaFold",
                         nargs="?",
-                        default="../data/raw_data/alphafold/20210722/%s_%s/"%(PROTEOME_ID, TAX_ID),
+                        default="./data/raw_data/alphafold/20210722/%s_%s/"%(PROTEOME_ID, TAX_ID),
                         help="Raw Data Path (AlphaFold).")
     parser.add_argument("--path-raw-data-uniprot",
                         nargs="?",
-                        default="../data/raw_data/uniprot_proteomes/20200917/uniprot.%s.%s.2020-09-15.txt.gz"%(TAX_ID, PROTEOME_ID),
+                        default="./data/raw_data/uniprot_proteomes/20200917/uniprot.%s.%s.2020-09-15.txt.gz"%(TAX_ID, PROTEOME_ID),
                         help="Raw Data Path (UniProt).")
     parser.add_argument("--path-raw-data-BioLiP",
                         nargs="?",
-                        default="../data/raw_data/BioLiP/all_annotations.tsv",
+                        default="./data/raw_data/BioLiP/all_annotations.tsv",
                         help="Raw Data Path (BioLiP).")
     parser.add_argument("--path-raw-data-BioLiP-skip",
                         nargs="?",
-                        default="../data/raw_data/BioLiP/ligand_list.txt",
+                        default="./data/raw_data/BioLiP/ligand_list.txt",
                         help="Raw Data Path (BioLiP - SKIP).")
     parser.add_argument("--path-featurized-data",
                         nargs="?",
-                        default="../data/input_data/featurized_data/%s/"%TAX_ID,
+                        default="./data/input_data/featurized_data/%s/"%TAX_ID,
                         help="Featurized Data Path.")
     parser.add_argument("--path-featurized-data-tasks",
                         nargs="?",
-                        default="../data/input_data/featurized_data/%s/tasks/"%TAX_ID,
+                        default="./data/input_data/featurized_data/%s/tasks/"%TAX_ID,
                         help="Featurized Data Path (tasks).")
     parser.add_argument("--path-featurized-data-features",
                         nargs="?",
-                        default="../data/input_data/featurized_data/%s/features/"%TAX_ID,
+                        default="./data/input_data/featurized_data/%s/features/"%TAX_ID,
                         help="Featurized Data Path (Features).")
     parser.add_argument("--path-test-featurized-data",
                         nargs="?",
-                        default="../data/test_data/featurized_data/%s/"%TAX_ID,
+                        default="./data/test_data/featurized_data/%s/"%TAX_ID,
                         help="Test Data Path.")
 
     parser.set_defaults(threshold_dist=threshold_dist)
@@ -58,15 +58,15 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
     parser.set_defaults(KnownProteins_filename='KnownProteinFiles.csv')
     parser.add_argument("--path-graph-data",
                         nargs="?",
-                        default="../data/input_data/graph_data_%sA/%s/%sFoldCV/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number),
+                        default="./data/input_data/graph_data_%sA/%s/%sFoldCV/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number),
                         help="GraphData Path.")
     parser.add_argument("--path-results",
                         nargs="?",
-                        default="../results/graph_%sA/%s/%sFoldCV/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number),
+                        default="./results/graph_%sA/%s/%sFoldCV/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number),
                         help="Results Path.")
     parser.add_argument("--path-protein-results",
                         nargs="?",
-                        default="../results/graph_%sA/%s/%sFoldCV/%s/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number,protein_ID),
+                        default="./results/graph_%sA/%s/%sFoldCV/%s/" %(threshold_dist, TAX_ID, args.cross_validation_fold_number,protein_ID),
                         help="Protein Results Path.")
 
     parser.set_defaults(multi_task_learning=multi_task_learning)
@@ -92,17 +92,14 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         type=int,
                         default=1,
                         help="Number of validation clusters extracted. Default is 10.")
-    parser.add_argument("--epochs",
-                        type=int,
-                        default=10000,
-                        help="Number of training epochs. Default is 200.")
+    parser.set_defaults(epochs=epochs)
     parser.add_argument("--PerformanceStep",
                         type=int,
-                        default=50,
+                        default=5,
                         help="Epochs where performance metrics are calculated. Must be greater than one. Default is 10.")
     parser.add_argument("--CheckPointStep",
                         type=int,
-                        default=50,
+                        default=5,
                         help="Epochs where calculated model weights and metrics are saved. Default is 10.")
     parser.add_argument("--seed",
                         type=int,
@@ -120,10 +117,11 @@ def parameter_parser(NodeCoder_usage:str='predict', TAX_ID:str='9606', PROTEOME_
                         type=float,
                         default=(0.9, 0.999),
                         help="betas for adam optimizer. Default is (0.9, 0.999).")
-    parser.add_argument("--weighted-loss",
-                        type=str,
-                        default='non', # 'non', 'Logarithmic', 'Power_Logarithmic','Linear','Smoothed_Linear' , 'Sigmoid'
-                        help="weighted loss scheme.")
+    parser.set_defaults(weighted_loss=weighted_loss)
+    # parser.add_argument("--weighted-loss",
+    #                     type=str,
+    #                     default='non', # 'non', 'Logarithmic', 'Power_Logarithmic','Linear','Smoothed_Linear' , 'Sigmoid'
+    #                     help="weighted loss scheme.")
     parser.add_argument("--train-ratio",
                         type=float,
                         default=0.8,

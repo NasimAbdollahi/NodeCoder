@@ -29,7 +29,7 @@ def tab_printer(args):
   keys = sorted(args.keys())
   table = Texttable()
   table.add_rows([["Parameter", "Value"]] + [[k.replace("_", " ").capitalize(), args[k]] for k in keys])
-  print(colors.OKCYAN + table.draw() + colors.ENDC)
+  print(colors.OKGREEN + table.draw() + colors.ENDC)
 
 def csv_files_SanityCheck(Graph,name, path):
   DataFrame = pd.DataFrame(list(zip(Graph.protein_files_name, Graph.node_num, Graph.protein_frame_Nan_Count)), columns=['Protein File', 'Node Num', 'Removed NaNs'])

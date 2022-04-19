@@ -1,0 +1,18 @@
+tasks file,features file
+P2Y12_HUMAN.tasks.csv,P2Y12_HUMAN.features.csv
+KMO_HUMAN.tasks.csv,KMO_HUMAN.features.csv
+SHC1_HUMAN.tasks.csv,SHC1_HUMAN.features.csv
+APLF_HUMAN.tasks.csv,APLF_HUMAN.features.csv
+CENPE_HUMAN.tasks.csv,CENPE_HUMAN.features.csv
+TLR8_HUMAN.tasks.csv,TLR8_HUMAN.features.csv
+ITB7_HUMAN.tasks.csv,ITB7_HUMAN.features.csv
+KI3L1_HUMAN.tasks.csv,KI3L1_HUMAN.features.csv
+DDX10_HUMAN.tasks.csv,DDX10_HUMAN.features.csv
+E2F8_HUMAN.tasks.csv,E2F8_HUMAN.features.csv
+MICU2_HUMAN.tasks.csv,MICU2_HUMAN.features.csv
+RBL1_HUMAN.tasks.csv,RBL1_HUMAN.features.csv
+MUC2_HUMAN.tasks.csv,MUC2_HUMAN.features.csv
+EXOS8_HUMAN.tasks.csv,EXOS8_HUMAN.features.csv
+CSTF1_HUMAN.tasks.csv,CSTF1_HUMAN.features.csv
+PTC1_HUMAN.tasks.csv,PTC1_HUMAN.features.csv
+GLRX1_HUMAN.tasks.csv,GLRX1_HUMAN.features.csv

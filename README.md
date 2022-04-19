@@ -2,8 +2,9 @@
 
 <img src="/figures/Nodecoder_banner.png" width = "1070">
 
-![APM](https://img.shields.io/apm/l/NodeCoder?style=plastic) ![GitHub package.json version](https://img.shields.io/github/package-json/v/NasimAbdollahi/NodeCoder)
-![GitHub file size in bytes](https://img.shields.io/github/size/:NasimAbdollahi/:NodeCoder?style=plastic)
+[//]: # (![APM]&#40;https://img.shields.io/apm/l/NodeCoder?style=plastic&#41; ![GitHub package.json version]&#40;https://img.shields.io/github/package-json/v/NasimAbdollahi/NodeCoder&#41;)
+
+[//]: # (![GitHub file size in bytes]&#40;https://img.shields.io/github/size/:NasimAbdollahi/:NodeCoder?style=plastic&#41;)
 
 
 A PyTorch implementation of **NodeCoder Pipeline**, a Graph Convolutional Network (GCN) model for protein residue characterization. 
@@ -76,28 +77,35 @@ loguru             0.6.0
 
 ```
 #### Installation steps
-Here is the step-by-step NodeCoder installation process:
-1. Before installing NodeCoder, we highly recommend to create a virutal Python 3.8 environment using venv command, 
-or Anaconda. Assuming you have anaconda3 installed on your computer, on your 
-Terminal run the following command line:
+Here is the step-by-step NodeCoder installation process:<br>
+**Method 1 - install test.pypi package**<br>
+1. Before installing NodeCoder, we highly recommend to create a virutal Python 3.8 environment using venv command,
+   or Anaconda. Assuming you have anaconda3 installed on your computer, on your Terminal run the following command line:
 ```
 $ conda create -n NodeCoder_env python=3.8
 ```
-2. Clone the repository:
-```
-$ git clone https://github.com/NasimAbdollahi/NodeCoder.git
-```
-3. Make sure your virtual environment is active. For conda environment you can use this command line: 
+2. Make sure your virtual environment is active. For conda environment you can use this command line:
 ```
 $ conda activate NodeCoder_env
 ```
-
-3. Make sure you are in the root directory of the NodeCoder package `~/NodeCoder/` (where setup.py is). 
+3. Go to the directory where you want to install NodeCoder package and run this command line:
+```
+$ pip install -i https://test.pypi.org/simple/ NodeCoder
+```
+ 
+**Method 2 - install from GitHub repository**<br>
+Follow above-mentioned steps 1-2, and continue with the following steps:
+3. Clone the repository:
+```
+$ git clone https://github.com/NasimAbdollahi/NodeCoder.git
+```
+4. Make sure you are in the root directory of the NodeCoder package `~/NodeCoder/` (where setup.py is). 
 Now install NodeCoder package with following command line, which will install all dependencies in the python environment
 you created in step 1:
 ```
 $ pip install .
 ```
+
 
 <a name="u3"></a>
 ### 🔌 NodeCoder Usage
@@ -118,8 +126,13 @@ These files are saved in <font color='#D55E00'> NodeCoder/data/input_data/featur
 directory in separate folders of <font color='#D55E00'> features </font> and <font color='#D55E00'> tasks </font>. 
 The command line to run the featurizer module is: 
 ```
-$ python NodeCoder/main_preprocess_raw_data.py
+$ python NodeCoder/preprocess_raw_data.py
 ```  
+To use NodeCoder as python package, import preprocessing module as:
+```
+>>> from NodeCoder import preprocess_raw_data 
+>>> preprocess_raw_data.main()
+```
 
 #### 🗃️ Generate graph data
 The next step after running the featurizer is to generate graph data from the features and tasks files. NodeCoder has a 
@@ -128,13 +141,22 @@ amino acid residues. The threshold distance is required to be defined by user in
 network, `threshold_dist = 5`. Graph data files are saved in this directory <font color='#D55E00'> ./data/input_data/graph_data_*A/ </font>.
 The command line to run the graph generator module is:
 ```
-$ python NodeCoder/main_generate_graph_data.py
-```  
+$ python NodeCoder/generate_graph_data.py
+``` 
+To use NodeCoder as python package, import generate_graph_data module as:
+```
+>>> from NodeCoder import generate_graph_data 
+>>> generate_graph_data.main()
+```
+Where, user can specify the following parameters
+```
+>>> generate_graph_data.main(TAX_ID='9606', PROTEOME_ID='UP000005640', threshold_dist=5, cross_validation_fold_number=5)
+```
 
 #### 🧠 Train NodeCoder
-To train NodeCoder's graph-based model, user needs to run `main_train.py` script.
+To train NodeCoder's graph-based model, user can use `train.py` module.
 Script `parser.py` has the model parameters used for training the model.
-User would need to use the following parameters in `main_train.py` script to specify the task/tasks of interest and the
+User would need to use the following parameters in `train.py` script to specify the task/tasks of interest and the
 cutoff distance for defining the protein contact network:
 ``` 
 Task = ['y_Ligand']
@@ -142,7 +164,17 @@ threshold_dist = 5
 ```
 Command line to train NodeCoder:
 ```
-$ python NodeCoder/main_train.py
+$ python NodeCoder/train.py
+```
+To use NodeCoder as python package, import train module as:
+```
+>>> from NodeCoder import train 
+>>> train.main()
+```
+Where, user can specify the following parameters
+```
+>>> train.main(threshold_dist=5, multi_task_learning=False, Task=['y_Ligand'], centrality_feature=True,
+         cross_validation_fold_number=5, epochs=1000)
 ```
 
 Here is a list of available training tasks (residue labels/annotations) :
@@ -153,8 +185,8 @@ Here is a list of available training tasks (residue labels/annotations) :
 ```
 
 #### 🤖 Inference with NodeCoder
-To use trained NodeCoder for protein functions prediction, user needs to run `main_predict.py` script.
-User would need to use the following parameters in `main_predict.py` script to specify the protein of interest, functions
+To use trained NodeCoder for protein functions prediction, user needs to run `predict.py` script.
+User would need to use the following parameters in `predict.py` script to specify the protein of interest, functions
 of interest and the cutoff distance for defining the protein contact network:
 ``` 
 Task = ['y_Ligand']
@@ -163,6 +195,16 @@ threshold_dist = 5
 Command line to run inference with NodeCoder:
 ```
 $ python NodeCoder/main_predict.py
+```
+To use NodeCoder as python package, import train module as:
+```
+>>> from NodeCoder import predict 
+>>> predict.main()
+```
+Where, user can specify the following parameters
+```
+>>> predict.main(protein_ID='KI3L1_HUMAN', threshold_dist:int=5, trained_model_fold_number=1, multi_task_learning=False,
+         Task=['y_Ligand'], centrality_feature=True, cross_validation_fold_number=5, epochs=1000)
 ```
 The user shall make sure the model with the desired parameters should have been trained already, otherwise the user would
 need to first train the model then use this pipeline for prediction.
