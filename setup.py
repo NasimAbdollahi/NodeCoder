@@ -13,7 +13,7 @@ from setuptools import find_packages, setup, Command
 
 # Package meta-data.
 NAME = 'NodeCoder'
-DESCRIPTION = 'A PyTorch implementation of NodeCoder Pipeline, a Graph Convolutional Network (GCN) model for protein residue characterization.'
+DESCRIPTION = 'A PyTorch implementation of NodeCoder pipeline, a Graph Convolutional Network (GCN) framework for protein residue characterization.'
 URL = 'https://github.com/NasimAbdollahi/Nodecoder/'
 EMAIL = 'nsm.abdolahi@gmail.com'
 AUTHOR = 'Nasim Abdollahi'
