@@ -90,7 +90,7 @@ $ conda activate NodeCoder_env
 ```
 3. Go to the directory where you want to install NodeCoder package and run this command line:
 ```
-$ pip install -i https://test.pypi.org/simple/ NodeCoder
+$ pip install --extra-index-url https://test.pypi.org/simple/ NodeCoder
 ```
  
 **Method 2 - install from GitHub repository**<br>
