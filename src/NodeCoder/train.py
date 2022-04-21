@@ -13,7 +13,7 @@ from NodeCoder.utilities.config import logger
 
 
 def main(threshold_dist:int=5, multi_task_learning:bool=False, Task:list=['y_Ligand'], centrality_feature:bool=True,
-         cross_validation_fold_number:int=5, epochs=50):
+         cross_validation_fold_number:int=5, epochs=50, ):
   """
   Parsing command line parameters, generating graph data, reading saved graph data, graph decomposition,
   fitting a NodeCoder and scoring the model.

@@ -3,7 +3,8 @@ import argparse
 
 def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
                      protein_ID:str='NA', trained_model_fold_number:int=1, threshold_dist:int=5, cross_validation_fold_number:int=5,
-                     multi_task_learning:bool=False, centrality_feature:bool=False, epochs:int=1000, weighted_loss:str='non'):
+                     multi_task_learning:bool=False, centrality_feature:bool=False, epochs:int=1000, checkpoint_step:int=50,
+                     performance_step:int=50, weighted_loss:str='non'):
     """
     A method to parse up command line parameters. By default it trains on the PubMed dataset.
     The default hyperparameters give a good quality representation without grid search.
@@ -93,14 +94,8 @@ def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP
                         default=1,
                         help="Number of validation clusters extracted. Default is 10.")
     parser.set_defaults(epochs=epochs)
-    parser.add_argument("--PerformanceStep",
-                        type=int,
-                        default=5,
-                        help="Epochs where performance metrics are calculated. Must be greater than one. Default is 10.")
-    parser.add_argument("--CheckPointStep",
-                        type=int,
-                        default=5,
-                        help="Epochs where calculated model weights and metrics are saved. Default is 10.")
+    parser.set_defaults(performance_step=performance_step)
+    parser.set_defaults(checkpoint_step=checkpoint_step)
     parser.add_argument("--seed",
                         type=int,
                         default=10,

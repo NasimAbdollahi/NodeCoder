@@ -156,7 +156,14 @@ The default species/proteome is HUMAN, but user can change it with the following
 The next step after running the featurizer is to generate graph data from the features and tasks files. NodeCoder has a 
 graph-generator module that generate protein graph data by taking a threshold for distance between 
 amino acid residues. The threshold distance is required to be defined by user in Angstrom unit to create the graph contact
-network, `threshold_dist = 5`. Graph data files are saved in this directory <font color='#D55E00'> `./data/input_data/graph_data_*A/` </font>.
+network, `threshold_dist = 5`. Graph data files are saved in this directory <font color='#D55E00'> `./data/input_data/graph_data_*A/` </font> 
+with the following tree structure (the example here is for 8A cut-off distance and 5 folds for cross-validation):
+```
+data/input_data/graph_data_8A/
+└── 9606
+    └── 5FoldCV
+```
+
 The command line to run the graph generator module is:
 ```
 $ python NodeCoder/generate_graph_data.py
@@ -323,12 +330,27 @@ All output files are saved in this directory <font color='#D55E00'> `./results/g
 according to model parameters, so that user can keep track of different test cases.
 
 #### When training NodeCoder
-In a cross-validation setting, the performance scores are saved in a .csv file like 
+In a cross-validation setting, the performance scores are saved in a `.csv` file like 
 <font color='#D55E00'> `Model_Performance_Metrics_Fold1.csv` </font>, for all folds. In addition to this, model state is also saved 
-in <font color='#D55E00'> `CheckPoints` </font> sub-directory at certain epochs. The checkpoint epoch can be specified in `parser.py`.
-At the end of training on each fold, the inference is performed by finding the optimum epoch and loading corresponding 
+in <font color='#D55E00'> `CheckPoints` </font> sub-directory at certain epochs. The default checkpoint epoch is `50`, as well as the epoch 
+to save model performance, but user can change these with `checkpoint_step` and `performance_step`. At the end of training on each fold, the inference is performed by finding the optimum epoch and loading corresponding 
 trained model at the optimum epoch. At the end of inference, an output file is saved in <font color='#D55E00'> `Prediction` </font> 
 sub-directory that includes the predicted labels for all proteins in validation set. This can be useful for ranking proteins.
+
+Once training NodeCoder is completed, the results are all saved in `results` folder with the following tree structure 
+(the example here is for 8A cut-off distance, 5 folds for cross-validation and Ligand as prediction task):
+```
+results
+└── graph_8A
+    └── 9606
+        └── 5FoldCV
+            └── y_Ligand_HiddenLayers_38_28_18_8_50Epochs_LR0.01
+                ├── CheckPoints
+                ├── Model_Performance_Curves.jpg
+                ├── Model_Performance_Metrics_Fold1.csv
+                └── Prediction
+```
+Model parameters such as network structure, number of epochs and learning rate (LR) are reflected in the created subdirectory.
 
 #### When predicting with NodeCoder
 When running inference with trained NodeCoder, the prediction results are saved in a sub-directory with protein name. 
@@ -336,12 +358,29 @@ The prediction result is a csv file like <font color='#D55E00'> `KI3L1_HUMAN_pre
 that contains the target labels, predicted labels and prediction probability of the labels per node (AA residue) for all 
 tasks of interest, {y1, y2, ..., yn}.
 
-
 | node_id | protein_id_flag | protein_id | Task 1 Target| Task 1 Prediction | Task 1 PredictionProb | ... | Task n Target | Task n Prediction | Task n PredictionProb |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0 | 0 | E2F8_HUMAN | 0/1 | 0/1 | float |  | 0/1 | 0/1 | float |
 | 1 | 0 | E2F8_HUMAN | 0/1 | 0/1 | float |  | 0/1 | 0/1 | float |
 
+Once inference is completed, the results are all saved in `results` folder, with protein ID as the name of the subdirectory.
+The following tree structure is an example for `KI3L1_HUMAN` as the protein of interest, 8A cut-off distance and 5 folds 
+for cross-validation):
+```
+results
+└── graph_8A
+    └── 9606
+        └── 5FoldCV
+            ├── KI3L1_HUMAN
+            │         ├── KI3L1_HUMAN_ProteinFiles.csv
+            │         ├── KI3L1_HUMAN_edge_features.csv
+            │         ├── KI3L1_HUMAN_edges.csv
+            │         ├── KI3L1_HUMAN_features.csv
+            │         ├── KI3L1_HUMAN_nodes_ProteinID.csv
+            │         ├── KI3L1_HUMAN_prediction_1Tasks_results.csv
+            │         └── KI3L1_HUMAN_target.csv
+            └── ...
+```
 
 <a name="u6"></a>
 ### 🤝 Collaborators

@@ -210,14 +210,14 @@ class NodeCoder_Trainer(object):
         self.train_ClassDistRatio, self.MajorityClass = label_distribution(self.train_clustered, self.args.target_name, "train")
         label_distribution(self.validation_clustered, self.args.target_name, "validation")
 
-        if self.args.epochs % self.args.PerformanceStep == 0:
-           self.Performance_epochs = np.append(np.arange(0, self.args.epochs, self.args.PerformanceStep), self.args.epochs-1)
+        if self.args.epochs % self.args.performance_step == 0:
+           self.Performance_epochs = np.append(np.arange(0, self.args.epochs, self.args.performance_step), self.args.epochs-1)
         else:
-            self.Performance_epochs = np.arange(0, self.args.epochs, self.args.PerformanceStep)
-        if self.args.epochs % self.args.CheckPointStep == 0:
-            self.CheckPoint_epochs = np.append(np.arange(0+self.args.CheckPointStep, self.args.epochs, self.args.CheckPointStep), self.args.epochs-1)
+            self.Performance_epochs = np.arange(0, self.args.epochs, self.args.performance_step)
+        if self.args.epochs % self.args.checkpoint_step == 0:
+            self.CheckPoint_epochs = np.append(np.arange(0+self.args.checkpoint_step, self.args.epochs, self.args.checkpoint_step), self.args.epochs-1)
         else:
-            self.CheckPoint_epochs = np.arange(0+self.args.CheckPointStep, self.args.epochs, self.args.CheckPointStep)
+            self.CheckPoint_epochs = np.arange(0+self.args.checkpoint_step, self.args.epochs, self.args.checkpoint_step)
 
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.learning_rate, betas=self.args.betas)
         self.model.train()
