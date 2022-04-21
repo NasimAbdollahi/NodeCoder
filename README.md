@@ -147,12 +147,16 @@ To use NodeCoder as python package, import preprocessing module as:
 >>> from NodeCoder import preprocess_raw_data 
 >>> preprocess_raw_data.main()
 ```
+The default species/proteome is HUMAN, but user can change it with the following parameters:
+```
+>>> generate_graph_data.main(TAX_ID='9606', PROTEOME_ID='UP000005640')
+```
 
 #### 🗃️ Generate graph data
 The next step after running the featurizer is to generate graph data from the features and tasks files. NodeCoder has a 
 graph-generator module that generate protein graph data by taking a threshold for distance between 
 amino acid residues. The threshold distance is required to be defined by user in Angstrom unit to create the graph contact
-network, `threshold_dist = 5`. Graph data files are saved in this directory <font color='#D55E00'> ./data/input_data/graph_data_*A/ </font>.
+network, `threshold_dist = 5`. Graph data files are saved in this directory <font color='#D55E00'> `./data/input_data/graph_data_*A/` </font>.
 The command line to run the graph generator module is:
 ```
 $ python NodeCoder/generate_graph_data.py
@@ -228,7 +232,7 @@ need to first train the model then use this pipeline for prediction.
 ### 🗄️ Graph data files
 
 ---
-When graph data is generated from featurized data, files are saved in this directory <font color='#D55E00'> ./data/input_data/graph_data_*A/ </font>. 
+When graph data is generated from featurized data, files are saved in this directory <font color='#D55E00'> `./data/input_data/graph_data_*A/` </font>. 
 Specific sub-directories are created depends on user choice of cutoff distance for protein contact network, proteom, 
 number of cross-validation folds. This helps user to keep track of different test cases.
 
@@ -315,20 +319,20 @@ Amino Acid Residue (AA) feature vector:
 ### 📂 Output files
 
 ---
-All output files are saved in this directory <font color='#D55E00'> ./results/graph_*A/ </font>. Specific sub-directories are created
+All output files are saved in this directory <font color='#D55E00'> `./results/graph_*A/` </font>. Specific sub-directories are created
 according to model parameters, so that user can keep track of different test cases.
 
 #### When training NodeCoder
 In a cross-validation setting, the performance scores are saved in a .csv file like 
-<font color='#D55E00'> Model_Performance_Metrics_Fold1.csv </font>, for all folds. In addition to this, model state is also saved 
-in <font color='#D55E00'> CheckPoints </font> sub-directory at certain epochs. The checkpoint epoch can be specified in `parser.py`.
+<font color='#D55E00'> `Model_Performance_Metrics_Fold1.csv` </font>, for all folds. In addition to this, model state is also saved 
+in <font color='#D55E00'> `CheckPoints` </font> sub-directory at certain epochs. The checkpoint epoch can be specified in `parser.py`.
 At the end of training on each fold, the inference is performed by finding the optimum epoch and loading corresponding 
-trained model at the optimum epoch. At the end of inference, an output file is saved in <font color='#D55E00'> Prediction </font> 
+trained model at the optimum epoch. At the end of inference, an output file is saved in <font color='#D55E00'> `Prediction` </font> 
 sub-directory that includes the predicted labels for all proteins in validation set. This can be useful for ranking proteins.
 
 #### When predicting with NodeCoder
 When running inference with trained NodeCoder, the prediction results are saved in a sub-directory with protein name. 
-The prediction result is a csv file like <font color='#D55E00'> KI3L1_HUMAN_prediction_3Tasks_results.csv </font>, which is a dataframe 
+The prediction result is a csv file like <font color='#D55E00'> `KI3L1_HUMAN_prediction_3Tasks_results.csv` </font>, which is a dataframe 
 that contains the target labels, predicted labels and prediction probability of the labels per node (AA residue) for all 
 tasks of interest, {y1, y2, ..., yn}.
 

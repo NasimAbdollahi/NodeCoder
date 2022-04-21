@@ -8,7 +8,7 @@ from utilities.parser import parameter_parser
 from utilities.utils import tab_printer
 from utilities.config import logger
 
-def main():
+def main(TAX_ID:str='9606', PROTEOME_ID:str='UP000005640'):
   """
   Parsing command line parameters,
   Reading raw_data (AlphaFold, BioLip, uniprot)
@@ -16,17 +16,8 @@ def main():
   Generating graph data and writing data files in input_data/graph_data_*A
   """
 
-  TAX_ID = '9606'
-  PROTEOME_ID = 'UP000005640'
-
-  """ 
-  Here you need to specify:
-  Threshold distance in Angstrom (A) for creating graph contact network
-  """
-  threshold_dist = 5
-
   """ default is single-task learning unless it is specified! """
-  args = parameter_parser(NodeCoder_usage='data_generation', TAX_ID=TAX_ID, PROTEOME_ID=PROTEOME_ID, threshold_dist=threshold_dist)
+  args = parameter_parser(NodeCoder_usage='data_generation', TAX_ID=TAX_ID, PROTEOME_ID=PROTEOME_ID)
   tab_printer(args)
 
   """ 
