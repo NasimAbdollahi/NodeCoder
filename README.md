@@ -7,7 +7,7 @@
 [//]: # (![GitHub file size in bytes]&#40;https://img.shields.io/github/size/:NasimAbdollahi/:NodeCoder?style=plastic&#41;)
 
 
-A PyTorch implementation of **NodeCoder Pipeline**, a Graph Convolutional Network (GCN) model for protein residue characterization. 
+A PyTorch implementation of **NodeCoder Pipeline**, a Graph Convolutional Network (GCN) - based  framework for protein residue characterization. 
 This work was presented at **NeurIPS MLSB 2021**: *Residue characterization on AlphaFold2 protein structures using graph neural networks*. [link to paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
 
 ## Abstract:
@@ -82,13 +82,13 @@ Here is the step-by-step NodeCoder installation process:<br>
 1. Before installing NodeCoder, we highly recommend to create a virutal Python 3.8 environment using venv command,
    or Anaconda. Assuming you have anaconda3 installed on your computer, on your Terminal run the following command line:
 ```
-$ conda create -n NodeCoder_env python=3.8
+$ conda create -n <your_python_env> python=3.8
 ```
 2. Make sure your virtual environment is active. For conda environment you can use this command line:
 ```
-$ conda activate NodeCoder_env
+$ conda activate <your_python_env>
 ```
-3. Go to the directory where you want to install NodeCoder package and run this command line:
+3. Now you can install NodeCoder with this command line:
 ```
 $ pip install --extra-index-url https://test.pypi.org/simple/ NodeCoder
 ```
@@ -119,11 +119,25 @@ NodeCoder uses AlphaFold2 modeled protein structures as input. [AlphaFold protei
 provides open access to protein structure predictions of human proteome and other key proteins of interest. 
 Prediction labels can be obtained from [BioLip database](https://zhanggroup.org//BioLiP/qsearch_pdb.cgi?pdbid=1h88) and 
 [Uniprot database](https://www.uniprot.org/).
-To extract node features and labels from these databases, NodeCoder has a **featurizer** module. When using NodeCoder, 
-first step after installation is to run the featurizer module. This module will create two files for every protein in 
-the selected proteome: <font color='#D55E00'> *.features.csv </font> and <font color='#D55E00'> *.tasks.csv </font> . 
-These files are saved in <font color='#D55E00'> NodeCoder/data/input_data/featurized_data/TAX_ID/ </font> 
-directory in separate folders of <font color='#D55E00'> features </font> and <font color='#D55E00'> tasks </font>. 
+Once you downloaded the protein databases, save them in data folder with following tree structures:
+```
+data/raw_data
+├── BioLiP
+├── alphafold
+└── uniprot_proteomes
+```
+Now we need to process these raw data sets to extract node features and labels. NodeCoder has a **featurizer** module. 
+When using NodeCoder, first step is to run the featurizer module, `preprocess_raw_data`. This module will create two files
+for every protein in the selected proteome: <font color='#D55E00'> `*.features.csv` </font> and <font color='#D55E00'> `*.tasks.csv` </font>. 
+These files are saved in <font color='#D55E00'>` NodeCoder/data/input_data/featurized_data/TAX_ID/` </font> 
+directory in separate folders of <font color='#D55E00'> `features` </font> and <font color='#D55E00'> `tasks` </font>. 
+For example if user choose human proteome, `9606`, then the following tree structure will be generated: 
+```
+data/input_data/featurized_data/
+└── 9606
+    ├── features
+    └── tasks
+```
 The command line to run the featurizer module is: 
 ```
 $ python NodeCoder/preprocess_raw_data.py
@@ -203,7 +217,7 @@ To use NodeCoder as python package, import train module as:
 ```
 Where, user can specify the following parameters
 ```
->>> predict.main(protein_ID='KI3L1_HUMAN', threshold_dist:int=5, trained_model_fold_number=1, multi_task_learning=False,
+>>> predict.main(protein_ID='KI3L1_HUMAN', threshold_dist=5, trained_model_fold_number=1, multi_task_learning=False,
          Task=['y_Ligand'], centrality_feature=True, cross_validation_fold_number=5, epochs=1000)
 ```
 The user shall make sure the model with the desired parameters should have been trained already, otherwise the user would
