@@ -18,7 +18,7 @@ URL = 'https://github.com/NasimAbdollahi/Nodecoder/'
 EMAIL = 'nsm.abdolahi@gmail.com'
 AUTHOR = 'Nasim Abdollahi'
 REQUIRES_PYTHON = '>=3.8.5'
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
