@@ -18,7 +18,7 @@ URL = 'https://github.com/NasimAbdollahi/Nodecoder/'
 EMAIL = 'nsm.abdolahi@gmail.com'
 AUTHOR = 'Nasim Abdollahi'
 REQUIRES_PYTHON = '>=3.8.5'
-VERSION = '1.0.0'
+VERSION = '1.0.2'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -106,8 +106,8 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages('NodeCoder'),
-    package_dir={'': 'NodeCoder'},
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     # packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of 'packages':
     #py_modules=['NodeCoder'],
