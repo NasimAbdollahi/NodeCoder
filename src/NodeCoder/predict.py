@@ -13,7 +13,9 @@ from NodeCoder.utilities.config import logger
 
 
 def main(protein_ID:str, threshold_dist:int=5, trained_model_fold_number:int=1, multi_task_learning:bool=False,
-         Task:list=['y_Ligand'], centrality_feature:bool=True, cross_validation_fold_number:int=5, epochs=50):
+         Task:list=['y_Ligand'], centrality_feature:bool=True, cross_validation_fold_number:int=5, epochs:int=2000,
+         performance_step:int=50, checkpoint_step:int=50, learning_rate:float=0.01, network_layers:list=[38, 28, 18, 8],
+         train_ratio:float=0.8, train_cluster_number:int=1, validation_cluster_number:int=1):
     """
     Parsing command line parameters, reading protein data, generating protein graph data, graph decomposition,
     performing prediction by loading trained models and scoring the prediction.
@@ -21,7 +23,7 @@ def main(protein_ID:str, threshold_dist:int=5, trained_model_fold_number:int=1, 
     """
 
     """ 
-    Here you need to specify:
+    Here User needs to specify:
     1 - Protein ID: protein_ID = 'KI3L1_HUMAN'
     2 - Fold number: For model trained on CrossValidation setup (The fold that this protein is in validation set not train!) 
     3 - Tasks of interest:  ['y_Ligand', 'y_TRANSMEM'] 
@@ -35,9 +37,12 @@ def main(protein_ID:str, threshold_dist:int=5, trained_model_fold_number:int=1, 
     Option 2: use a single trained model with multi-task learning setup by for your tasks of interest, e.g. 
     Task = ['y_Ligand', 'y_Peptide'] and set multi_task_learning=True. 
     """
-    args = parameter_parser(NodeCoder_usage='predict', Task=Task, protein_ID=protein_ID, trained_model_fold_number=trained_model_fold_number,
-                            threshold_dist=threshold_dist, centrality_feature=centrality_feature, multi_task_learning=multi_task_learning,
-                            cross_validation_fold_number=cross_validation_fold_number, epochs=epochs)
+    args = parameter_parser(NodeCoder_usage='predict', protein_ID=protein_ID, trained_model_fold_number=trained_model_fold_number,
+                            threshold_dist=threshold_dist, multi_task_learning=multi_task_learning, Task=Task,
+                            centrality_feature=centrality_feature, cross_validation_fold_number=cross_validation_fold_number,
+                            epochs=epochs, performance_step=performance_step, checkpoint_step=checkpoint_step, learning_rate=learning_rate,
+                            network_layers=network_layers, train_ratio=train_ratio, train_cluster_number=train_cluster_number,
+                            validation_cluster_number=validation_cluster_number)
     tab_printer(args)
 
     """ 

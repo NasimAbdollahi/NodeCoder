@@ -1,10 +1,13 @@
 import argparse
 
 
-def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP000005640', Task:str='NA',
-                     protein_ID:str='NA', trained_model_fold_number:int=1, threshold_dist:int=5, cross_validation_fold_number:int=5,
-                     multi_task_learning:bool=False, centrality_feature:bool=False, epochs:int=1000, checkpoint_step:int=50,
-                     performance_step:int=50, weighted_loss:str='non'):
+def parameter_parser(NodeCoder_usage:str, alphafold_data_path:str='not provided', uniprot_data_path:str='not provided',
+                     biolip_data_path:str='not provided', biolip_data_skip_path:str='not provided', TAX_ID:str='9606',
+                     PROTEOME_ID:str='UP000005640', Task:str='NA', protein_ID:str='NA', trained_model_fold_number:int=1,
+                     threshold_dist:int=5, cross_validation_fold_number:int=5, multi_task_learning:bool=False,
+                     centrality_feature:bool=False, epochs:int=1000, checkpoint_step:int=50, performance_step:int=50,
+                     learning_rate:float=0.01, network_layers:list=[38, 28, 18, 8], weighted_loss:str='non',
+                     train_ratio:float=0.8, train_cluster_number:int=1, validation_cluster_number:int=1):
     """
     A method to parse up command line parameters. By default it trains on the PubMed dataset.
     The default hyperparameters give a good quality representation without grid search.
@@ -16,26 +19,11 @@ def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP
 
     parser.set_defaults(TAX_ID=TAX_ID)
     parser.set_defaults(PROTEOME_ID=PROTEOME_ID)
-    parser.add_argument("--path-raw-data",
-                        nargs="?",
-                        default="./data/raw_data/",
-                        help="Raw Data Path.")
-    parser.add_argument("--path-raw-data-AlphaFold",
-                        nargs="?",
-                        default="./data/raw_data/alphafold/20210722/%s_%s/"%(PROTEOME_ID, TAX_ID),
-                        help="Raw Data Path (AlphaFold).")
-    parser.add_argument("--path-raw-data-uniprot",
-                        nargs="?",
-                        default="./data/raw_data/uniprot_proteomes/20200917/uniprot.%s.%s.2020-09-15.txt.gz"%(TAX_ID, PROTEOME_ID),
-                        help="Raw Data Path (UniProt).")
-    parser.add_argument("--path-raw-data-BioLiP",
-                        nargs="?",
-                        default="./data/raw_data/BioLiP/all_annotations.tsv",
-                        help="Raw Data Path (BioLiP).")
-    parser.add_argument("--path-raw-data-BioLiP-skip",
-                        nargs="?",
-                        default="./data/raw_data/BioLiP/ligand_list.txt",
-                        help="Raw Data Path (BioLiP - SKIP).")
+    parser.set_defaults(path_raw_data_AlphaFold=alphafold_data_path)
+    parser.set_defaults(path_raw_data_uniprot=uniprot_data_path)
+    parser.set_defaults(path_raw_data_BioLiP=biolip_data_path)
+    parser.set_defaults(path_raw_data_BioLiP_skip=biolip_data_skip_path)
+
     parser.add_argument("--path-featurized-data",
                         nargs="?",
                         default="./data/input_data/featurized_data/%s/"%TAX_ID,
@@ -85,14 +73,8 @@ def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP
                         nargs="?",
                         default="Physical", #"Physical", "metis", "random"
                         help="Clustering method for graph decomposition. Default is the Physical procedure.")
-    parser.add_argument("--train-cluster-number",
-                        type=int,
-                        default=1,
-                        help="Number of train clusters extracted. Default is 10.")
-    parser.add_argument("--validation-cluster-number",
-                        type=int,
-                        default=1,
-                        help="Number of validation clusters extracted. Default is 10.")
+    parser.set_defaults(train_cluster_number=train_cluster_number)
+    parser.set_defaults(validation_cluster_number=validation_cluster_number)
     parser.set_defaults(epochs=epochs)
     parser.set_defaults(performance_step=performance_step)
     parser.set_defaults(checkpoint_step=checkpoint_step)
@@ -104,10 +86,7 @@ def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP
                         type=float,
                         default=0.5,
                         help="Dropout parameter. Default is 0.5.")
-    parser.add_argument("--learning-rate",
-                        type=float,
-                        default=0.01,
-                        help="Learning rate. Default is 0.01.")
+    parser.set_defaults(learning_rate=learning_rate)
     parser.add_argument("--betas",
                         type=float,
                         default=(0.9, 0.999),
@@ -117,19 +96,15 @@ def parameter_parser(NodeCoder_usage:str, TAX_ID:str='9606', PROTEOME_ID:str='UP
     #                     type=str,
     #                     default='non', # 'non', 'Logarithmic', 'Power_Logarithmic','Linear','Smoothed_Linear' , 'Sigmoid'
     #                     help="weighted loss scheme.")
-    parser.add_argument("--train-ratio",
-                        type=float,
-                        default=0.8,
-                        help="train data ratio, rest of data will be used for validation when cross-validation is not used."
-                             "Default is 0.8.")
+    parser.set_defaults(train_ratio=train_ratio)
     parser.add_argument("--test-ratio",
                         type=float,
                         default=0.01,
                         help="Test data ratio. Default is 0.2.")
-    parser.set_defaults(input_layers=[38, 28, 18, 8])
-    parser.set_defaults(output_layer_size=8)
-
+    parser.set_defaults(input_layers=network_layers)
     args = parser.parse_args()
+    parser.set_defaults(output_layer_size=args.input_layers[-1])
+
 
     train_edge_path, train_edge_feature_path, train_features_path, train_target_path, train_protein_filename_path = [], [], [], [], []
     for i in range(0, args.cross_validation_fold_number):

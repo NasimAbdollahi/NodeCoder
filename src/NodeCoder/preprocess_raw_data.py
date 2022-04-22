@@ -3,12 +3,13 @@ import torch
 import numpy as np
 import random
 import time
-from featurizer.build_datasets import DataBuilder
-from utilities.parser import parameter_parser
-from utilities.utils import tab_printer
-from utilities.config import logger
+from NodeCoder.featurizer.build_datasets import DataBuilder
+from NodeCoder.utilities.parser import parameter_parser
+from NodeCoder.utilities.utils import tab_printer
+from NodeCoder.utilities.config import logger
 
-def main(TAX_ID:str='9606', PROTEOME_ID:str='UP000005640'):
+def main(alphafold_data_path:str='not provided', uniprot_data_path:str='not provided', biolip_data_path:str='not provided',
+         biolip_data_skip_path:str='not provided', TAX_ID:str='9606', PROTEOME_ID:str='UP000005640'):
   """
   Parsing command line parameters,
   Reading raw_data (AlphaFold, BioLip, uniprot)
@@ -17,7 +18,9 @@ def main(TAX_ID:str='9606', PROTEOME_ID:str='UP000005640'):
   """
 
   """ default is single-task learning unless it is specified! """
-  args = parameter_parser(NodeCoder_usage='data_generation', TAX_ID=TAX_ID, PROTEOME_ID=PROTEOME_ID)
+  args = parameter_parser(NodeCoder_usage='data_generation', alphafold_data_path=alphafold_data_path,
+                          uniprot_data_path=uniprot_data_path, biolip_data_path=biolip_data_path,
+                          biolip_data_skip_path=biolip_data_skip_path, TAX_ID=TAX_ID, PROTEOME_ID=PROTEOME_ID)
   tab_printer(args)
 
   """ 

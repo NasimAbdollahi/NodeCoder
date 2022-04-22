@@ -62,21 +62,34 @@ class DataBuilder(object):
 
     def main(self):
         # Generate uniprot list required for task or feature dataframes and define what you want to do
-        protein_list = protein_sequences.read_proteome(self.args.path_raw_data_uniprot)
+        if self.args.path_raw_data_uniprot == 'not provided':
+            logger.warning('the path to UniProt data is required. uniprot_data_path takes the path in str type.')
+            exit()
+        else:
+            protein_list = protein_sequences.read_proteome(self.args.path_raw_data_uniprot)
         run_tasks = True
         run_features = True
 
         # Generate Task Dataframes
         if run_tasks:
-            self.all_biolip_df = protein_tasks.build_biolip_df(self.args.path_raw_data_BioLiP, self.args.path_raw_data_BioLiP_skip)
-            logger.info(f'Initiating MP evaluation of {len(protein_list)} protein task dataframes with {cpu_count()} cpus.')
-            with Pool(processes=cpu_count()) as pool:
-                _ = [x for x in tqdm.tqdm(pool.imap(self.generate_protein_task_df, protein_list))]
+            if self.args.path_raw_data_BioLiP == 'not provided' & self.args.path_raw_data_BioLiP_skip == 'not provided':
+                logger.warning('the path to BioLiP data and skip are required. biolip_data_path and biolip_data_skip_path'
+                               ' take the path in str type.')
+                exit()
+            else:
+                self.all_biolip_df = protein_tasks.build_biolip_df(self.args.path_raw_data_BioLiP, self.args.path_raw_data_BioLiP_skip)
+                logger.info(f'Initiating MP evaluation of {len(protein_list)} protein task dataframes with {cpu_count()} cpus.')
+                with Pool(processes=cpu_count()) as pool:
+                    _ = [x for x in tqdm.tqdm(pool.imap(self.generate_protein_task_df, protein_list))]
 
         # Generate Feature Dataframes
         if run_features:
-            self.all_homology_models = protein_features.load_alphafold_index(self.args.path_raw_data_AlphaFold)
-            logger.info(f'Structure Models Parsed\n{self.all_homology_models}')
-            logger.info(f'Initiating MP evaluation of {len(protein_list)} protein feature dataframes with {cpu_count()} cpus.')
-            with Pool(processes=cpu_count()) as pool:
-                _ = [x for x in tqdm.tqdm(pool.imap(self.generate_protein_feature_df, protein_list))]
+            if self.args.path_raw_data_AlphaFold == 'not provided':
+                logger.warning('the path to AlphaFold data is required. alphafold_data_path takes the path in str type.')
+                exit()
+            else:
+                self.all_homology_models = protein_features.load_alphafold_index(self.args.path_raw_data_AlphaFold)
+                logger.info(f'Structure Models Parsed\n{self.all_homology_models}')
+                logger.info(f'Initiating MP evaluation of {len(protein_list)} protein feature dataframes with {cpu_count()} cpus.')
+                with Pool(processes=cpu_count()) as pool:
+                    _ = [x for x in tqdm.tqdm(pool.imap(self.generate_protein_feature_df, protein_list))]

@@ -22,6 +22,7 @@ each protein in the AlphaFold2 human proteome are generated and used as input re
 (GCN), which annotates specific regions of interest based on the structural attributes of the amino acid residues, including their
 local neighbors. We demonstrate the approach using six varied amino acid classification tasks.
 ```
+
 <img src="/figures/NodeCoder_Pipeline.png" width = "1070">
 
 
@@ -119,14 +120,16 @@ NodeCoder uses AlphaFold2 modeled protein structures as input. [AlphaFold protei
 provides open access to protein structure predictions of human proteome and other key proteins of interest. 
 Prediction labels can be obtained from [BioLip database](https://zhanggroup.org//BioLiP/qsearch_pdb.cgi?pdbid=1h88) and 
 [Uniprot database](https://www.uniprot.org/).
-Once you downloaded the protein databases, save them in data folder with following tree structures:
+
+Once you downloaded the protein databases, you need to process these raw data sets to extract node features and labels. 
+NodeCoder has a **featurizer** module.
+You will need to specify the directories you have the datasets saved:
 ```
-data/raw_data
-├── BioLiP
-├── alphafold
-└── uniprot_proteomes
+alphafold_data_path
+uniprot_data_path
+biolip_data_path
+biolip_data_skip_path
 ```
-Now we need to process these raw data sets to extract node features and labels. NodeCoder has a **featurizer** module. 
 When using NodeCoder, first step is to run the featurizer module, `preprocess_raw_data`. This module will create two files
 for every protein in the selected proteome: <font color='#D55E00'> `*.features.csv` </font> and <font color='#D55E00'> `*.tasks.csv` </font>. 
 These files are saved in <font color='#D55E00'>` NodeCoder/data/input_data/featurized_data/TAX_ID/` </font> 
@@ -145,11 +148,12 @@ $ python NodeCoder/preprocess_raw_data.py
 To use NodeCoder as python package, import preprocessing module as:
 ```
 >>> from NodeCoder import preprocess_raw_data 
->>> preprocess_raw_data.main()
+>>> preprocess_raw_data.main(alphafold_data_path='.', uniprot_data_path='.', biolip_data_path='.', biolip_data_skip_path='.')
 ```
 The default species/proteome is HUMAN, but user can change it with the following parameters:
 ```
->>> generate_graph_data.main(TAX_ID='9606', PROTEOME_ID='UP000005640')
+>>> generate_graph_data.main(alphafold_data_path='.', uniprot_data_path='.', biolip_data_path='.', biolip_data_skip_path='.',
+                              TAX_ID='9606', PROTEOME_ID='UP000005640')
 ```
 
 #### 🗃️ Generate graph data
