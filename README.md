@@ -121,19 +121,20 @@ provides open access to protein structure predictions of human proteome and othe
 Prediction labels can be obtained from [BioLip database](https://zhanggroup.org//BioLiP/qsearch_pdb.cgi?pdbid=1h88) and 
 [Uniprot database](https://www.uniprot.org/).
 
-Once you downloaded the protein databases, you need to process these raw data sets to extract node features and labels. 
-NodeCoder has a **featurizer** module.
-You will need to specify the directories you have the datasets saved:
+Once you downloaded the protein databases, first step is to run the NodeCoder's featurizer module to process these raw 
+data sets and extract node features and labels. 
+When using NodeCoder's featurizer module, `preprocess_raw_data`, you will need to specify the directories you have the 
+datasets saved:
 ```
 alphafold_data_path
 uniprot_data_path
 biolip_data_path
 biolip_data_skip_path
 ```
-When using NodeCoder, first step is to run the featurizer module, `preprocess_raw_data`. This module will create two files
-for every protein in the selected proteome: <font color='#D55E00'> `*.features.csv` </font> and <font color='#D55E00'> `*.tasks.csv` </font>. 
-These files are saved in <font color='#D55E00'>` NodeCoder/data/input_data/featurized_data/TAX_ID/` </font> 
-directory in separate folders of <font color='#D55E00'> `features` </font> and <font color='#D55E00'> `tasks` </font>. 
+The featurizer module will create two files for every protein in the selected proteome: <font color='#D55E00'> 
+`*.features.csv` </font> and <font color='#D55E00'> `*.tasks.csv` </font>. These files are saved in 
+<font color='#D55E00'>` NodeCoder/data/input_data/featurized_data/TAX_ID/` </font> directory in separate folders of 
+<font color='#D55E00'> `features` </font> and <font color='#D55E00'> `tasks` </font>. 
 For example if user choose human proteome, `9606`, then the following tree structure will be generated: 
 ```
 data/input_data/featurized_data/
@@ -158,10 +159,10 @@ The default species/proteome is HUMAN, but user can change it with the following
 
 #### 🗃️ Generate graph data
 The next step after running the featurizer is to generate graph data from the features and tasks files. NodeCoder has a 
-graph-generator module that generate protein graph data by taking a threshold for distance between 
-amino acid residues. The threshold distance is required to be defined by user in Angstrom unit to create the graph contact
-network, `threshold_dist = 5`. Graph data files are saved in this directory <font color='#D55E00'> `./data/input_data/graph_data_*A/` </font> 
-with the following tree structure (the example here is for 8A cut-off distance and 5 folds for cross-validation):
+graph-generator module that generate protein graph data by taking a threshold for distance between amino acid residues. 
+The threshold distance is required to be defined by user in Angstrom unit to create the graph contact network, `threshold_dist = 5`. 
+Graph data files are saved in this directory <font color='#D55E00'>`./data/input_data/graph_data_*A/`</font> with the 
+following tree structure (the example here is for 8A cut-off distance and 5 folds for cross-validation):
 ```
 data/input_data/graph_data_8A/
 └── 9606
@@ -181,6 +182,7 @@ Where, user can specify the following parameters
 ```
 >>> generate_graph_data.main(TAX_ID='9606', PROTEOME_ID='UP000005640', threshold_dist=5, cross_validation_fold_number=5)
 ```
+Note that for cross-validation setting, separate graphs are created for each fold.
 
 #### 🧠 Train NodeCoder
 To train NodeCoder's graph-based model, user can use `train.py` module.
@@ -244,8 +246,29 @@ need to first train the model then use this pipeline for prediction.
 
 ---
 When graph data is generated from featurized data, files are saved in this directory <font color='#D55E00'> `./data/input_data/graph_data_*A/` </font>. 
-Specific sub-directories are created depends on user choice of cutoff distance for protein contact network, proteom, 
+Specific sub-directories are created depends on user choice of cutoff distance for protein contact network, proteom, and
 number of cross-validation folds. This helps user to keep track of different test cases.
+For every fold, following data files are created for train and validation sets:
+```
+data/input_data/graph_data_5A/9606/
+└── *FoldCV
+    ├── train_1_ProteinFileNames.csv
+    ├── train_1_ProteinFiles.csv
+    ├── train_1_edge_features.csv
+    ├── train_1_edges.csv
+    ├── train_1_features.csv
+    ├── train_1_nodes_ProteinID.csv
+    ├── train_1_target.csv
+    ├── ....
+    ├── validation_1_ProteinFileNames.csv
+    ├── validation_1_ProteinFiles.csv
+    ├── validation_1_edge_features.csv
+    ├── validation_1_edges.csv
+    ├── validation_1_features.csv
+    ├── validation_1_nodes_ProteinID.csv
+    ├── validation_1_target.csv
+    ├── ...
+```
 
 <details open>
 <summary> Generated graph data files includes: </summary>
