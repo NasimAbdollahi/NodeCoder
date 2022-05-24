@@ -155,7 +155,7 @@ To use NodeCoder as python package, import preprocessing module as:
 ```
 The default species/proteome is HUMAN, but user can change it with the following parameters:
 ```
->>> generate_graph_data.main(alphafold_data_path='.', uniprot_data_path='.', biolip_data_path='.', biolip_data_skip_path='.',
+>>> preprocess_raw_data.main(alphafold_data_path='.', uniprot_data_path='.', biolip_data_path='.', biolip_data_skip_path='.',
                               TAX_ID='9606', PROTEOME_ID='UP000005640')
 ```
 
