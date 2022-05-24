@@ -10,6 +10,8 @@
 A PyTorch implementation of **NodeCoder Pipeline**, a Graph Convolutional Network (GCN) - based  framework for protein residue characterization. 
 This work was presented at **NeurIPS MLSB 2021**: *Residue characterization on AlphaFold2 protein structures using graph neural networks*. [link to paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
 
+[Link to GitHub repository.](https://github.com/NasimAbdollahi/NodeCoder)
+
 ## Abstract:
 ```
 Three-dimensional structure prediction tools offer a rapid means to approximate the topology of a protein structure for any

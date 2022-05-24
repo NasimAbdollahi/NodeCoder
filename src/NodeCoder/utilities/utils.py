@@ -329,32 +329,15 @@ def csv_writter_performance_metrics(Results, i):
   #                                                    Results.Validation_Task_ROCAUC_kfoldCV, Results.Validation_Task_PRAUC_kfoldCV)), columns=Columns)
   # task_performance_DataFrame.to_csv(Results.args.Metrics_task_path[i], index=False)
 
-def csv_writer_prediction_score_perprotein(Results, i):
+def csv_writer_performance_metrics_perprotein(Results, i):
   """ Writing per protein prediction score to disk. """
-  protein_id = np.array(np.arange(0, len(Results.Validation_PRAUC), dtype=int))
-  prediction_score_DataFrame = pd.DataFrame(list(zip(protein_id, Results.Validation_BalancedAcc, Results.Validation_F1score, Results.Validation_MCC)), columns=['Protein ID', 'Validation_BalancedACC', 'Validation_F1Score', 'Validation_MCC'])
-  prediction_score_DataFrame.to_csv(Results.args.Prediction_Metrics_filename[i], index=False)
-  # with open(Results.args.Prediction_Metrics_filename[i], 'w', newline='') as f2:
-  #   thewriter = csv.writer(f2)
-  #   thewriter.writerow(['Protein ID', 'Validation_BalancedACC', 'Validation_F1Score', 'Validation_MCC'])
-  #   protein_id = np.array(np.arange(0, len(Results.Validation_PRAUC), dtype=int))
-  #   for iter in protein_id:
-  #     thewriter.writerow([protein_id[iter], Results.Validation_BalancedAcc[iter], Results.Validation_F1score[iter], Results.Validation_MCC[iter]])
-
-# def Prediction_writer_KfoldCV(Task, TrueLabel, PredictedLabel, PredictedProb, ProteinID, Prediction_fileName):
-#   """
-#   Writing the final prediction to disk, csv file.
-#   """
-#   firstrow = []
-#   firstrow.extend([t+' Target', t+' Prediction', t+' Prediction Probability'] for t in Task)
-#   Columns = [j for i in firstrow for j in i]
-#   Rows = [[np.array(TrueLabel[0][0]).squeeze(), np.array(PredictedLabel[0][0]).squeeze(), np.array(PredictedProb[0][0]).squeeze()] for i in range(0, len(Task))]
-#   Rows2 = [j for i in Rows for j in i]
-#   DataFrame = ProteinID
-#   for i in range(0, len(Columns)):
-#     DF = pd.DataFrame({Columns[i]: Rows2[i]})
-#     DataFrame = pd.concat([DataFrame, DF], axis=1)
-#   DataFrame.to_csv(Prediction_fileName, index=False)
+  protein_id_DataFrame = pd.read_csv(Results.args.validation_node_proteinID_path[i])
+  protein_DataFrame = protein_id_DataFrame.drop_duplicates(subset=["protein_id"], keep="last", ignore_index=True)
+  del protein_DataFrame['node_id']
+  prediction_score_DataFrame = pd.DataFrame(list(zip(Results.Protein_ROCAUC, Results.Protein_PRAUC, Results.Protein_BalancedAcc,
+                                                     Results.Protein_F1score, Results.Protein_MCC)), columns=['ROCAUC', 'PRAUC', 'BalancedACC', 'F1Score', 'MCC'])
+  final_DataFrame = pd.concat([protein_DataFrame, prediction_score_DataFrame], axis=1)
+  final_DataFrame.to_csv(Results.args.Prediction_Metrics_filename[i], index=False)
 
 def csv_writer_prediction(NodeCoder_usage, tasks, target, predictions, predictions_prob, proteinID_path, path_to_save):
   """

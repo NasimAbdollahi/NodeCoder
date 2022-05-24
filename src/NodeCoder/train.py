@@ -10,7 +10,7 @@ from NodeCoder.gcn.NodeCoder import NodeCoder_Model
 from NodeCoder.gcn.NodeCoder_train import NodeCoder_Trainer
 from NodeCoder.gcn.train_wrapper import Wrapper
 from NodeCoder.utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, DownSampling, \
-  optimum_epoch, csv_writter_performance_metrics, csv_writer_prediction, plot_performance_metrics
+  optimum_epoch, csv_writter_performance_metrics, csv_writer_prediction, csv_writer_performance_metrics_perprotein, plot_performance_metrics
 from NodeCoder.utilities.config import logger
 
 
@@ -129,6 +129,7 @@ def main(multi_processing_setting:bool=False, threshold_dist:int=5, multi_task_l
       logger.success(f"Inference for fold {i+1} completed.")
       logger.info("Calculating and writing prediction scores per protein ...")
       csv_writer_prediction(args.NodeCoder_usage, Task, inference.validation_targets, inference.validation_predictions, inference.validation_predictions_prob, args.validation_node_proteinID_path[i], args.Prediction_fileName[i])
+      csv_writer_performance_metrics_perprotein(inference, i)
       logger.success(f"Model is successfully trained on fold {i+1} and prediction scores are saved!")
 
     plot_performance_metrics(args)

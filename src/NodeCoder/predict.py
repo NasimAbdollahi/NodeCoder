@@ -8,7 +8,8 @@ from NodeCoder.graph_generator.graph_data_generator import Graph_Data_Generator
 from NodeCoder.graph_generator.clustering import Clustering
 from NodeCoder.gcn.NodeCoder import NodeCoder_Model
 from NodeCoder.gcn.NodeCoder_predict import NodeCoder_Predictor
-from NodeCoder.utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch, csv_writer_prediction
+from NodeCoder.utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch, \
+    csv_writer_prediction, csv_writer_performance_metrics_perprotein
 from NodeCoder.utilities.config import logger
 
 
@@ -111,7 +112,12 @@ def main(protein_ID:str, threshold_dist:int=5, trained_model_fold_number:int=1, 
     """ Writing predicted and target labels """
     logger.info("Writing predicted labels ...")
     csv_writer_prediction(args.NodeCoder_usage, Task, TrueLabel, PredictedLabel, PredictedProb, args.protein_node_proteinID_path, args.protein_prediction_fileName)
-    logger.success("Inference is successfully completed.")
+
+    """ Writing prediction metrics per protein """
+    logger.info(f"Writing prediction metrics per protein ...")
+    csv_writer_performance_metrics_perprotein(predictor, args.trained_model_fold_number)
+
+    logger.success("Inference has successfully completed.")
 
 if __name__ == "__main__":
     main()

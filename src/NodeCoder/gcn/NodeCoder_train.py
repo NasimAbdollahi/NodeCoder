@@ -72,6 +72,14 @@ class NodeCoder_Trainer(object):
         self.Validation_Task_ROCAUC = []
         self.Validation_Task_PRAUC = []
 
+        self.Protein_BalancedAcc = []
+        self.Protein_Precision = []
+        self.Protein_Recall = []
+        self.Protein_F1score = []
+        self.Protein_ROCAUC = []
+        self.Protein_PRAUC = []
+        self.Protein_MCC = []
+
     def reset_weights(self):
         """
           Resetting model weights to avoid weight leakage in cross validation setting.
@@ -472,17 +480,17 @@ class NodeCoder_Trainer(object):
         Protein = []
         for i in range(0, max(protein_ID)+1):
             Protein.append(node_ID[np.where(protein_ID == i)])
-            self.Validation_BalancedAcc.append(metrics.balanced_accuracy_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1)))
-            self.Validation_Precision.append(metrics.precision_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1), zero_division=1))
-            self.Validation_Recall.append(metrics.recall_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1), zero_division=1))
-            self.Validation_F1score.append(metrics.f1_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1), pos_label=1,zero_division=1))
+            self.Protein_BalancedAcc.append(metrics.balanced_accuracy_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1)))
+            self.Protein_Precision.append(metrics.precision_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1), zero_division=1))
+            self.Protein_Recall.append(metrics.recall_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1), zero_division=1))
+            self.Protein_F1score.append(metrics.f1_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1), pos_label=1,zero_division=1))
             try:
-               self.Validation_ROCAUC.append(metrics.roc_auc_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions_prob[0, Protein[i]].cpu().reshape(-1, 1)))
+               self.Protein_ROCAUC.append(metrics.roc_auc_score(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions_prob[0, Protein[i]].cpu().reshape(-1, 1)))
             except ValueError:
-               self.Validation_ROCAUC.append(0)
+               self.Protein_ROCAUC.append(0)
             try:
                precision, recall, thresholds = metrics.precision_recall_curve(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions_prob[0, Protein[i]].cpu().reshape(-1, 1))
-               self.Validation_PRAUC.append(metrics.auc(recall, precision))
+               self.Protein_PRAUC.append(metrics.auc(recall, precision))
             except ValueError:
-               self.Validation_PRAUC.append(0)
-            self.Validation_MCC = metrics.matthews_corrcoef(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1))
+               self.Protein_PRAUC.append(0)
+            self.Validation_MCC.append(metrics.matthews_corrcoef(self.validation_targets[0, Protein[i]].cpu().reshape(-1, 1), self.validation_predictions[0, Protein[i]].cpu().reshape(-1, 1)))

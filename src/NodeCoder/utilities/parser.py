@@ -175,7 +175,7 @@ def parameter_parser(NodeCoder_usage:str, alphafold_data_path:str='not provided'
             filename_Metrics_task = filename + '/Model_Performance_Metrics_tasks_Fold'+str(i+1)+'.csv'
             filename_Metrics_task_cluster = filename + '/Model_Performance_Metrics_clusters_tasks_Fold'+str(i+1)+'.csv'
             filename_Prediction = filename + '/Prediction/Final_Prediction_Fold'+str(i+1)+'.csv'
-            filename_Prediction_Metrics = filename + '/Prediction/Model_Performance_Final_Prediction_Metrics_Fold'+str(i+1)+'.csv'
+            filename_Prediction_Metrics = filename + '/Prediction/Model_Performance_Metrics_PerProtein_Fold'+str(i+1)+'.csv'
             CheckPoint_path.append('%s%s' %(args.path_results, filename_CheckPoint))
             Metrics_path.append('%s%s' %(args.path_results, filename_Metrics))
             Metrics_tasks_path.append('%s%s' %(args.path_results, filename_Metrics_task))
