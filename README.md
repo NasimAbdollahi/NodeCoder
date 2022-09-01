@@ -342,7 +342,7 @@ Amino Acid Residue (AA) feature vector:
 | 20-23 | feat_PHI, feat_PSI, feat_TAU, feat_THETA | Dihedral angles, φ, ψ, τ, θ |
 | 24 | feat_BBSASA | Back Bone Solvent Accessibility |
 | 25 | feat_SCSASA | Side Chain Solvent Accessibility |
-| 26 | feat_pLDDT | Show file differences that haven't been staged |
+| 26 | feat_pLDDT | AlphaFold per-residue confidence metric |
 | 27-41 | feat_DSSP_* | Secondary structure features, e.g. α-helix and β-sheet  |
 | 42 | feat_CentricDist | Euclidean distance of AA residue from the center of protein |
 | 43 | feat_CentricCosineDist | Cosine distance of AA residue from the center of protein |
