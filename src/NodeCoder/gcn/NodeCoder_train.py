@@ -41,6 +41,7 @@ class NodeCoder_Trainer(object):
         self.Train_Precision = []
         self.Train_Recall = []
         self.Train_F1score = []
+        self.Train_MCC = []
         self.Train_ROCAUC = []
         self.Train_PRAUC = []
         self.Train_AvePrecision = []
@@ -50,6 +51,7 @@ class NodeCoder_Trainer(object):
         self.Train_Task_Precision = []
         self.Train_Task_Recall = []
         self.Train_Task_F1score = []
+        self.Train_Task_MCC = []
         self.Train_Task_ROCAUC = []
         self.Train_Task_PRAUC = []
 
@@ -69,6 +71,7 @@ class NodeCoder_Trainer(object):
         self.Validation_Task_Precision = []
         self.Validation_Task_Recall = []
         self.Validation_Task_F1score = []
+        self.Validation_Task_MCC = []
         self.Validation_Task_ROCAUC = []
         self.Validation_Task_PRAUC = []
 
@@ -402,6 +405,7 @@ class NodeCoder_Trainer(object):
             self.Train_Precision.append(metrics.precision_score(self.train_targets.cpu().reshape(-1,1), self.train_predictions.cpu().reshape(-1, 1), zero_division=1))
             self.Train_Recall.append(metrics.recall_score(self.train_targets.cpu().reshape(-1, 1), self.train_predictions.cpu().reshape(-1, 1), zero_division=1))
             self.Train_F1score.append(metrics.f1_score(self.train_targets.cpu().reshape(-1, 1), self.train_predictions.cpu().reshape(-1, 1), average="micro"))
+            self.Train_MCC.append(metrics.matthews_corrcoef(self.train_targets.cpu().reshape(-1, 1), self.train_predictions.cpu().reshape(-1, 1)))
             self.Train_ROCAUC.append(metrics.roc_auc_score(self.train_targets.cpu().reshape(-1, 1), self.train_predictions_prob.cpu().reshape(-1, 1)))
             precision, recall, thresholds = metrics.precision_recall_curve(self.train_targets.cpu().reshape(-1, 1), self.train_predictions_prob.cpu().reshape(-1, 1))
             self.Train_PRAUC.append(metrics.auc(recall, precision))
@@ -417,6 +421,7 @@ class NodeCoder_Trainer(object):
                 # self.Train_Task_Precision.append(metrics.precision_score(self.train_targets.cpu()[i], self.train_predictions.cpu()[i], average="micro", zero_division=1))
                 # self.Train_Task_Recall.append(metrics.recall_score(self.train_targets.cpu()[i], self.train_predictions.cpu()[i], average="micro"))
                 self.Train_Task_F1score.append(metrics.f1_score(self.train_targets.cpu()[i], self.train_predictions.cpu()[i], average="micro"))
+                self.Train_Task_MCC.append(metrics.matthews_corrcoef(self.train_targets.cpu()[i], self.train_predictions.cpu()[i]))
                 self.Train_Task_ROCAUC.append(metrics.roc_auc_score(self.train_targets.cpu()[i], self.train_predictions_prob.cpu()[i])) # sometimes y_true has only one lable
                 precision, recall, thresholds = metrics.precision_recall_curve(self.train_targets.cpu()[i], self.train_predictions_prob.cpu()[i])
                 self.Train_Task_PRAUC.append(metrics.auc(recall, precision))
@@ -444,6 +449,7 @@ class NodeCoder_Trainer(object):
             self.Validation_Precision.append(metrics.precision_score(self.validation_targets.cpu().reshape(-1, 1), self.validation_predictions.cpu().reshape(-1, 1), zero_division=1)) #average="micro"
             self.Validation_Recall.append(metrics.recall_score(self.validation_targets.cpu().reshape(-1, 1), self.validation_predictions.cpu().reshape(-1, 1), zero_division=1)) #average="micro", macro:This does not take label imbalance into account.
             self.Validation_F1score.append(metrics.f1_score(self.validation_targets.cpu().reshape(-1, 1), self.validation_predictions.cpu().reshape(-1, 1), average="micro", pos_label=1))
+            self.Validation_MCC.append(metrics.matthews_corrcoef(self.validation_targets.cpu().reshape(-1, 1), self.validation_predictions.cpu().reshape(-1, 1)))
             self.Validation_ROCAUC.append(metrics.roc_auc_score(self.validation_targets.cpu().reshape(-1, 1), self.validation_predictions_prob.cpu().reshape(-1, 1)))
             precision, recall, thresholds = metrics.precision_recall_curve(self.validation_targets.cpu().reshape(-1, 1), self.validation_predictions_prob.cpu().reshape(-1, 1))
             self.Validation_PRAUC.append(metrics.auc(recall, precision))
@@ -459,6 +465,7 @@ class NodeCoder_Trainer(object):
                 self.Validation_Task_Precision.append(metrics.precision_score(self.validation_targets.cpu()[i], self.validation_predictions.cpu()[i], average="micro", zero_division=1))
                 self.Validation_Task_Recall.append(metrics.recall_score(self.validation_targets.cpu()[i], self.validation_predictions.cpu()[i], average="micro"))
                 self.Validation_Task_F1score.append(metrics.f1_score(self.validation_targets.cpu()[i], self.validation_predictions.cpu()[i], average="micro"))
+                self.Validation_Task_MCC.append(metrics.matthews_corrcoef(self.validation_targets.cpu()[i], self.validation_predictions.cpu()[i]))
                 self.Validation_Task_ROCAUC.append(metrics.roc_auc_score(self.validation_targets.cpu()[i], self.validation_predictions_prob.cpu()[i])) # sometimes y_true has only one lable
                 precision, recall, thresholds = metrics.precision_recall_curve(self.validation_targets.cpu()[i], self.validation_predictions_prob.cpu()[i])
                 self.Validation_Task_PRAUC.append(metrics.auc(recall, precision))

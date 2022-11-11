@@ -310,13 +310,13 @@ def protein_clustering(protein_filename,Proteins_Node, cluster_Num):
   return cluster_membership
 
 def csv_writter_performance_metrics(Results, i):
-  """ Writing the model performance metrics to disk. """
-  Columns = ['Epoch id', 'Train Loss', 'Train ROC_AUC', 'Train PR_AUC', 'Train_Precision', 'Train_Recall',
-             'Validation Loss', 'Validation ROC_AUC', 'Validation PR_AUC', 'Validation_Precision', 'Validation_Recall']
+  Columns = ['Epoch id', 'Train Loss', 'Train ROC_AUC', 'Train PR_AUC', 'Train Precision', 'Train Recall',
+             'Train f1Score', 'Train MCC', 'Validation Loss', 'Validation ROC_AUC', 'Validation PR_AUC',
+             'Validation Precision', 'Validation Recall', 'Validation f1Score', 'Validation MCC']
   performance_DataFrame = pd.DataFrame(list(zip(Results.Performance_epochs, Results.Train_Loss,Results.Train_ROCAUC, Results.Train_PRAUC,
-                                               Results.Train_Precision, Results.Train_Recall, Results.Validation_Loss,
-                                               Results.Validation_ROCAUC, Results.Validation_PRAUC, Results.Validation_Precision,
-                                               Results.Validation_Recall)), columns=Columns)
+                                                Results.Train_Precision, Results.Train_Recall, Results.Train_F1score, Results.Train_MCC,
+                                                Results.Validation_Loss,Results.Validation_ROCAUC, Results.Validation_PRAUC, Results.Validation_Precision,
+                                                Results.Validation_Recall, Results.Validation_F1score, Results.Validation_MCC)), columns=Columns)
   performance_DataFrame.to_csv(Results.args.Metrics_path[i], index=False)
 
   # """ metrics per tasks """

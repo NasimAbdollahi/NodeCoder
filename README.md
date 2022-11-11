@@ -59,7 +59,7 @@ prediction of multiple tasks of interest such as binding sites or post-translati
 
 ---
 #### Required dependencies
-The codebase is implemented in Python 3.8 and package versions used for development are:
+The codebase is implemented in Python 3.8.5 and package versions used for development are:
 ```
 numpy              1.19.2
 pandas             1.2.4
@@ -82,10 +82,10 @@ loguru             0.6.0
 #### Installation steps
 Here is the step-by-step NodeCoder installation process:<br>
 **Method 1 - install test.pypi package**<br>
-1. Before installing NodeCoder, we highly recommend to create a virutal Python 3.8 environment using venv command,
+1. Before installing NodeCoder, we highly recommend to create a virutal Python 3.8.5 environment using venv command,
    or Anaconda. Assuming you have anaconda3 installed on your computer, on your Terminal run the following command line:
 ```
-$ conda create -n <your_python_env> python=3.8
+$ conda create -n <your_python_env> python=3.8.5
 ```
 2. Make sure your virtual environment is active. For conda environment you can use this command line:
 ```
@@ -227,7 +227,7 @@ threshold_dist = 5
 ```
 Command line to run inference with NodeCoder:
 ```
-$ python NodeCoder/main_predict.py
+$ python NodeCoder/predict.py
 ```
 To use NodeCoder as python package, import train module as:
 ```
