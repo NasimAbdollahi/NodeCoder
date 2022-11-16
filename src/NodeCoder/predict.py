@@ -10,6 +10,7 @@ from NodeCoder.gcn.NodeCoder import NodeCoder_Model
 from NodeCoder.gcn.NodeCoder_predict import NodeCoder_Predictor
 from NodeCoder.utilities.utils import tab_printer, graph_reader, feature_reader, edge_feature_reader, target_reader, optimum_epoch, \
     csv_writer_prediction, csv_writer_performance_metrics_perprotein
+from NodeCoder.utilities.visualization import Visualize_Prediction       
 from NodeCoder.utilities.config import logger
 
 
@@ -116,7 +117,11 @@ def main(protein_ID:str, threshold_dist:int=5, trained_model_fold_number:int=1, 
     """ Writing prediction metrics per protein """
     logger.info(f"Writing prediction metrics per protein ...")
     csv_writer_performance_metrics_perprotein(predictor, args.trained_model_fold_number)
-
+	
+	""" Visualizing residue level prediction on protein """
+    logger.info(f"Visualizing prediction ...")
+    Visualize_Prediction(args)
+    
     logger.success("Inference has successfully completed.")
 
 if __name__ == "__main__":
