@@ -8,10 +8,7 @@ def parameter_parser(NodeCoder_usage:str, alphafold_data_path:str='not provided'
                      centrality_feature:bool=False, epochs:int=1000, checkpoint_step:int=50, performance_step:int=50,
                      learning_rate:float=0.01, network_layers:list=[38, 28, 18, 8], weighted_loss:str='non',
                      train_ratio:float=0.8, train_cluster_number:int=1, validation_cluster_number:int=1):
-    """
-    A method to parse up command line parameters. By default it trains on the PubMed dataset.
-    The default hyperparameters give a good quality representation without grid search.
-    """
+
     parser = argparse.ArgumentParser(description="Run .")
 
     parser.set_defaults(NodeCoder_usage=NodeCoder_usage)

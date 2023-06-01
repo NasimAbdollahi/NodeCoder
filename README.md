@@ -34,9 +34,10 @@ local neighbors. We demonstrate the approach using six varied amino acid classif
 🔌 [ NodeCoder Usage ](#u3)<br>
 🗄️ [ Graph data files ](#u4)<br> 
 📂 [ Output files ](#u5)<br>
-🤝 [ Collaborators ](#u6)<br>
-🔐 [ License ](#u7)<br>
-📄 [ Citing this work ](#u8)
+🗃 [ Data availability ](#u6)<br>
+🤝 [ Collaborators ](#u7)<br>
+🔐 [ License ](#u8)<br>
+📄 [ Citing this work ](#u9)
 
 <a name="u1"></a>
 ### 🧬 What does the NodeCoder Pipeline do? 
@@ -410,8 +411,25 @@ results
             │         └── KI3L1_HUMAN_target.csv
             └── ...
 ```
-
 <a name="u6"></a>
+### 🗃 Data availability
+
+---
+NodeCoder comprises source code responsible for generating training and validation graph datasets from raw data. 
+The raw data used for evaluating NodeCoder consists of three datasets: AlphaFold (860.2 MB), BioLip (32.4 MB) and 
+UniProt (102.3 MB), which can be accessed at [https://osf.io/qt5kn/](https://osf.io/qt5kn/). 
+ 
+
+
+Source datasets  were downloaded from:
+
+AlphaFold2 (860.2 MB): [https://alphafold.ebi.ac.uk/](https://alphafold.ebi.ac.uk/)
+
+BioLip (32.4 MB): [https://zhanggroup.org/BioLiP/index.cgi](https://zhanggroup.org/BioLiP/index.cgi)
+
+UniProt (102.3 MB): [https://www.uniprot.org/](https://www.uniprot.org/)
+
+<a name="u7"></a>
 ### 🤝 Collaborators
 
 ---
@@ -422,19 +440,43 @@ The main contributors are:  <br />
 **Bo Wang**, Ph.D., Canada CIFAR AI Chair at the Vector Institute, Professor at University of Toronto <br />
 **Stephen MacKinnon**, Ph.D., Chief Platform Officer at Cyclica Inc. <br />
 
-<a name="u7"></a>
-### 🔐 License
-MIT Licence 
-
 <a name="u8"></a>
+### 🔐 License
+
+---
+#### 🔓 NodeCoder Software (python package): 
+Instalable python package of NodeCoder is subject to **MIT License** [MIT](https://opensource.org/license/mit/). <br />
+
+#### 🔓 NodeCoder data: 
+datasets are subject to the licences of their source datasets:
+
+**AlphaFold**: Dataset is available for academic and commercial use, under a CC-BY-4.0 license, [License disclaimer](https://alphafold.ebi.ac.uk/assets/License-Disclaimer.pdf). Use of the AlphaFold Protein Structure Database is subject to EMBL-EBI [Terms of Use](https://www.ebi.ac.uk/about/terms-of-use/). <br />
+**BioLip**: [https://zhanggroup.org/BioLiP/index.cgi](https://zhanggroup.org/BioLiP/index.cgi) <br />
+**Uniprot**: Dataset is subject to Creative Commons Attribution 4.0 International (CC BY 4.0) License, [License disclaimer](https://www.uniprot.org/help/license#:~:text=We%20make%20no%20warranties%20regarding,damages%20resulting%20from%20its%20use.). <br />
+
+
+<a name="u9"></a>
 ### 📄 Citing this work
+
+---
+By making the software and data openly accessible, we aim to foster transparency, reproducibility, and collaboration in the scientific community.
+Any questions or inquiries regarding the codebase and dataset can be directed to authors.
+You can reference our work using the folowing BibTeX:
+
+```
+@article{abdollahi2023nodecoder,
+  title={NodeCoder: a graph-based machine learning platform to predict active sites of modeled protein structures},
+  author={Abdollahi, Nasim and Tonekaboni, Seyed Ali Madani and Huang, Jay and Wang, Bo and MacKinnon, Stephen},
+  journal={arXiv preprint arXiv:2302.03590},
+  year={2023}
+}
+```
 ```
 @article {2021,
 	author = {Abdollahi, Nasim and Madani, Ali and Wang, Bo and MacKinnon,
 	Stephen},
 	title = {Residue characterization on AlphaFold2 protein structures using graph neural networks},
 	year = {2021},
-	doi = {},
 	publisher = {NeurIPS},
 	URL = {https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf},
 	journal = {NeurIPS, MLSB}

@@ -15,7 +15,7 @@ from NodeCoder.utilities.config import logger
 
 
 def main(multi_processing_setting:bool=False, threshold_dist:int=5, multi_task_learning:bool=False, Task:list=['y_Ligand'], centrality_feature:bool=True,
-         cross_validation_fold_number:int=5, epochs:int=2000, performance_step:int=50, checkpoint_step:int=50,
+         cross_validation_fold_number:int=1, epochs:int=2000, performance_step:int=50, checkpoint_step:int=50,
          learning_rate:float=0.01, network_layers:list=[38, 28, 18, 8], train_ratio:float=0.8, train_cluster_number:int=1,
          validation_cluster_number:int=1):
   """
@@ -98,41 +98,41 @@ def main(multi_processing_setting:bool=False, threshold_dist:int=5, multi_task_l
     train_target = target_reader(args.train_target_path[i], args.target_name)
     if args.downSampling_majority_class == 'Yes':
       train_graph, train_features, train_edge_features, train_target = DownSampling(args, train_graph, train_features, train_edge_features, train_target)
-      train_clustered = Clustering(args, args.train_protein_filename_path[i], train_graph, train_features, train_edge_features, train_target, cluster_number=args.train_cluster_number)
-      train_clustered.decompose()
-      logger.info(f"Clustering train graph completed in {(time.time() - start_time)} seconds.")
+    train_clustered = Clustering(args, args.train_protein_filename_path[i], train_graph, train_features, train_edge_features, train_target, cluster_number=args.train_cluster_number)
+    train_clustered.decompose()
+    logger.info(f"Clustering train graph completed in {(time.time() - start_time)} seconds.")
 
-      start_time = time.time()
-      validation_graph = graph_reader(args.validation_edge_path[i])
-      validation_edge_features = edge_feature_reader(args.validation_edge_feature_path[i])
-      validation_features = feature_reader(args.validation_features_path[i], args.validation_edge_path[i], args.centrality_feature)
-      validation_target = target_reader(args.validation_target_path[i], args.target_name)
-      validation_clustered = Clustering(args, args.validation_protein_filename_path[i], validation_graph, validation_features, validation_edge_features, validation_target, cluster_number=args.validation_cluster_number)
-      validation_clustered.decompose()
-      logger.info(f"Clustering validation graph completed in {(time.time() - start_time)} seconds.")
+    start_time = time.time()
+    validation_graph = graph_reader(args.validation_edge_path[i])
+    validation_edge_features = edge_feature_reader(args.validation_edge_feature_path[i])
+    validation_features = feature_reader(args.validation_features_path[i], args.validation_edge_path[i], args.centrality_feature)
+    validation_target = target_reader(args.validation_target_path[i], args.target_name)
+    validation_clustered = Clustering(args, args.validation_protein_filename_path[i], validation_graph, validation_features, validation_edge_features, validation_target, cluster_number=args.validation_cluster_number)
+    validation_clustered.decompose()
+    logger.info(f"Clustering validation graph completed in {(time.time() - start_time)} seconds.")
 
-      logger.info(f"Training NodeCoder on fold {i+1} started ...")
-      trainer = NodeCoder_Trainer(args, NodeCoder_Network.model, train_clustered, validation_clustered, i)
-      trainer.train()
-      logger.success(f"Training NodeCoder on fold {i+1} completed.")
-      logger.info("Performance metrics are being saved to disk ...")
-      csv_writter_performance_metrics(trainer, i)
+    logger.info(f"Training NodeCoder on fold {i+1} started ...")
+    trainer = NodeCoder_Trainer(args, NodeCoder_Network.model, train_clustered, validation_clustered, i)
+    trainer.train()
+    logger.success(f"Training NodeCoder on fold {i+1} completed.")
+    logger.info("Performance metrics are being saved to disk ...")
+    csv_writter_performance_metrics(trainer, i)
 
-      """ 
-      Now we find the optimum epoch and load the optimum trained model that is saved using checkpoints.
-      Then run inference to regenerate the final predicted labels and calculate prediction scores per protein.
-      """
-      logger.info(f"Running inference on validation fold {i+1} with model saved at optimum epoch ...")
-      checkpoint_epoch = optimum_epoch(args.Metrics_path[i])
-      inference = NodeCoder_Trainer(args, NodeCoder_Network.model, train_clustered, validation_clustered, i, checkpoint_epoch)
-      inference.test()
-      logger.success(f"Inference for fold {i+1} completed.")
-      logger.info("Calculating and writing prediction scores per protein ...")
-      csv_writer_prediction(args.NodeCoder_usage, Task, inference.validation_targets, inference.validation_predictions, inference.validation_predictions_prob, args.validation_node_proteinID_path[i], args.Prediction_fileName[i])
-      csv_writer_performance_metrics_perprotein(inference, i)
-      logger.success(f"Model is successfully trained on fold {i+1} and prediction scores are saved!")
+    """ 
+    Now we find the optimum epoch and load the optimum trained model that is saved using checkpoints.
+    Then run inference to regenerate the final predicted labels and calculate prediction scores per protein.
+    """
+    logger.info(f"Running inference on validation fold {i+1} with model saved at optimum epoch ...")
+    checkpoint_epoch = optimum_epoch(args.Metrics_path[i])
+    inference = NodeCoder_Trainer(args, NodeCoder_Network.model, train_clustered, validation_clustered, i, checkpoint_epoch)
+    inference.test()
+    logger.success(f"Inference for fold {i+1} completed.")
+    logger.info("Calculating and writing prediction scores per protein ...")
+    csv_writer_prediction(args.NodeCoder_usage, Task, inference.validation_targets, inference.validation_predictions, inference.validation_predictions_prob, args.validation_node_proteinID_path[i], args.Prediction_fileName[i])
+    csv_writer_performance_metrics_perprotein(inference, i)
+    logger.success(f"Model is successfully trained on fold {i+1} and prediction scores are saved!")
 
-    plot_performance_metrics(args)
+  plot_performance_metrics(args)
 
 
 if __name__ == "__main__":
