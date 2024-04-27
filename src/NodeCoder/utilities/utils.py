@@ -415,7 +415,7 @@ def label_distribution(Data, Tasks, title):
 
 def plot_metrics(file_name, title, Scheme, zoomOption, PerformanceStep):
   """ plots train and validation metrics on separate figures. """
-  colors = ['#CC79A7', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#000000', 'pink', 'lightblue']
+  # colors = ['#CC79A7', '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#000000', 'pink', 'lightblue']
   fig, axs = plt.subplots(nrows=2, ncols=3, figsize=(13, 7))
   for i in range(0, len(file_name)):
     epoch = np.array(pd.read_csv(file_name[i])["Epoch id"]) + 1
