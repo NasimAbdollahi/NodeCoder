@@ -82,7 +82,7 @@ loguru             0.6.0
 ```
 #### Installation steps
 Here is the step-by-step NodeCoder installation process:<br>
-**Method 1 - install test.pypi package**<br>
+**Method 1 - install from PyPI**<br>
 1. Before installing NodeCoder, we highly recommend to create a virutal Python 3.8.5 environment using venv command,
    or Anaconda. Assuming you have anaconda3 installed on your computer, on your Terminal run the following command line:
 ```
@@ -94,7 +94,7 @@ $ conda activate <your_python_env>
 ```
 3. Now you can install NodeCoder with this command line:
 ```
-$ pip install --extra-index-url https://test.pypi.org/simple/ NodeCoder
+$ pip install NodeCoder
 ```
  
 **Method 2 - install from GitHub repository**<br>
@@ -116,6 +116,14 @@ $ pip install .
 
 ---
 NodeCoder package can be employed for train and inference. Here we describe how to use it:
+
+If NodeCoder is installed from PyPI, you can run pipeline steps with the packaged CLI:
+```
+$ NodeCoder-cli preprocess
+$ NodeCoder-cli graph-data
+$ NodeCoder-cli train
+$ NodeCoder-cli predict --protein-id KI3L1_HUMAN
+```
 
 #### 🗂️ Preprocessing raw data
 [link to paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
