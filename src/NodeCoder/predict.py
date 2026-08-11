@@ -14,7 +14,7 @@ from NodeCoder.utilities.visualization import Visualize_Prediction
 from NodeCoder.utilities.config import logger
 
 
-def main(protein_ID:str, threshold_dist:int=5, trained_model_fold_number:int=1, multi_task_learning:bool=False,
+def main(protein_ID:str='NA', threshold_dist:int=5, trained_model_fold_number:int=1, multi_task_learning:bool=False,
          Task:list=['y_Ligand'], centrality_feature:bool=True, cross_validation_fold_number:int=5, epochs:int=2000,
          performance_step:int=50, checkpoint_step:int=50, learning_rate:float=0.01, network_layers:list=[38, 28, 18, 8],
          train_ratio:float=0.8, train_cluster_number:int=1, validation_cluster_number:int=1):
@@ -118,7 +118,7 @@ def main(protein_ID:str, threshold_dist:int=5, trained_model_fold_number:int=1, 
     logger.info(f"Writing prediction metrics per protein ...")
     csv_writer_performance_metrics_perprotein(predictor, args.trained_model_fold_number)
 	
-	""" Visualizing residue level prediction on protein """
+    """ Visualizing residue level prediction on protein """
     logger.info(f"Visualizing prediction ...")
     Visualize_Prediction(args)
     
