@@ -18,7 +18,7 @@ URL = 'https://github.com/NasimAbdollahi/NodeCoder/'
 EMAIL = 'nsm.abdolahi@gmail.com'
 AUTHOR = 'Nasim Abdollahi'
 REQUIRES_PYTHON = '>=3.8.5'
-VERSION = '1.0.2'
+VERSION = '1.0.4'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -30,7 +30,7 @@ REQUIRED = [
              ]
 # What packages are optional?
 EXTRAS = {
-    # 'fancy feature': ['django'],
+    'webapp': ['gradio>=4.44.0'],
 }
 
 # The rest you shouldn't have to touch too much :)
@@ -113,7 +113,10 @@ setup(
     #py_modules=['NodeCoder'],
 
     entry_points={
-         'console_scripts': ['NodeCoder-cli=NodeCoder.main:main'],
+         'console_scripts': [
+             'NodeCoder-cli=NodeCoder.main:main',
+             'NodeCoder-webapp=NodeCoder.webapp:main',
+         ],
      },
     install_requires=REQUIRED,
     extras_require=EXTRAS,

@@ -125,6 +125,21 @@ $ NodeCoder-cli train
 $ NodeCoder-cli predict --protein-id KI3L1_HUMAN
 ```
 
+#### 🌐 Web app (easy interactive use)
+For a browser-based interface, install the optional webapp dependency and launch the app:
+```
+$ pip install "NodeCoder[webapp]"
+$ NodeCoder-webapp
+```
+This opens a local interface at `http://localhost:7860` where users can select tasks, run prediction by protein ID,
+and download generated output files.
+
+For local development from this repository:
+```
+$ pip install gradio
+$ python -m NodeCoder.webapp
+```
+
 #### 🗂️ Preprocessing raw data
 [link to paper](https://www.mlsb.io/papers_2021/MLSB2021_Residue_characterization_on_AlphaFold2.pdf)
 NodeCoder uses AlphaFold2 modeled protein structures as input. [AlphaFold protein structure database](https://alphafold.ebi.ac.uk/)

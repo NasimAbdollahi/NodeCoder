@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4 - 2026-08-11
+- Added an interactive Gradio web app at src/NodeCoder/webapp.py for protein-level prediction workflows.
+- Added packaged web app entry point (NodeCoder-webapp) and optional dependency group webapp in setup metadata.
+- Added web app launch instructions to README for both packaged and local module launch flows.
+
 ## 1.0.3 - 2026-08-11
 - Aligned installation instructions with current PyPI behavior (`pip install NodeCoder`) instead of TestPyPI.
 - Added packaged CLI usage examples (`NodeCoder-cli`) in README installation/usage section.
