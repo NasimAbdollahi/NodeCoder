@@ -1,0 +1,21 @@
+{
+  "version": "2026-08-11",
+  "models": [
+    {
+      "id": "ligand_v1",
+      "active": true,
+      "tasks": ["y_Ligand"],
+      "threshold_dist": 5,
+      "cross_validation_fold_number": 1,
+      "trained_model_fold_number": 1,
+      "epochs": 50,
+      "learning_rate": 0.01,
+      "network_layers": [38, 28, 18, 8],
+      "centrality_feature": true,
+      "train_ratio": 0.8,
+      "train_cluster_number": 1,
+      "validation_cluster_number": 1,
+      "notes": "Initial production catalog entry for ligand-site inference."
+    }
+  ]
+}

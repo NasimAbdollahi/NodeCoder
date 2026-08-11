@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.5 - 2026-08-11
+- Added a production model catalog at src/NodeCoder/model_catalog.json and locked webapp inference to catalog-registered task sets.
+- Simplified webapp inference UX to task-first selection with automatic model configuration lookup.
+- Replaced residue-level table preview with structure artifact outputs (PNG gallery and HTML artifact list) in the webapp.
+- Added compatibility shim src/google_drive_downloader.py to satisfy torch-geometric import expectations in legacy environments.
+- Improved webapp robustness by handling legacy predict-path indexing failures as non-fatal when prediction CSV is already produced.
+
 ## 1.0.4 - 2026-08-11
 - Added an interactive Gradio web app at src/NodeCoder/webapp.py for protein-level prediction workflows.
 - Added packaged web app entry point (NodeCoder-webapp) and optional dependency group webapp in setup metadata.

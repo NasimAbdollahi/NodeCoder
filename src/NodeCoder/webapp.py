@@ -1,9 +1,10 @@
 import glob
+import json
 import os
-import re
 import sys
+import traceback
 from contextlib import contextmanager
-from typing import List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import gradio as gr
 import pandas as pd
@@ -46,53 +47,36 @@ TASK_LABELS = {
     "y_CHAIN": "Protein chain",
 }
 
-
-def _parse_model_spec(model_spec: str) -> Tuple[int, int, int, float, List[int]]:
-    threshold_match = re.search(r"graph_(\d+)A", model_spec)
-    folds_match = re.search(r"/(\d+)FoldCV/", model_spec)
-    task_match = re.search(r"/(y_[^/]+)_HiddenLayers_", model_spec)
-    layers_match = re.search(r"HiddenLayers_([0-9_]+)_", model_spec)
-    epochs_match = re.search(r"_(\d+)Epochs_", model_spec)
-    lr_match = re.search(r"_LR([0-9.]+)$", model_spec)
-
-    if not (threshold_match and folds_match and task_match and layers_match and epochs_match and lr_match):
-        raise ValueError("Model path format is not recognized.")
-
-    threshold_dist = int(threshold_match.group(1))
-    cross_validation_fold_number = int(folds_match.group(1))
-    task = task_match.group(1)
-    network_layers = [int(x) for x in layers_match.group(1).split("_") if x]
-    epochs = int(epochs_match.group(1))
-    learning_rate = float(lr_match.group(1))
-    return threshold_dist, cross_validation_fold_number, epochs, learning_rate, network_layers
+MODEL_CATALOG_PATH = os.path.join(os.path.dirname(__file__), "model_catalog.json")
 
 
-def _discover_candidate_models(tasks: List[str]) -> List[str]:
-    if len(tasks) == 1:
-        pattern = f"./results/graph_*A/*/*FoldCV/{tasks[0]}_HiddenLayers_*_Epochs_LR*"
-    else:
-        pattern = f"./results/graph_*A/*/*FoldCV/{len(tasks)}Targets_HiddenLayers_*_Epochs_LR*"
+def _load_model_catalog() -> Dict[str, Any]:
+    if not os.path.exists(MODEL_CATALOG_PATH):
+        raise ValueError(f"Model catalog not found: {MODEL_CATALOG_PATH}")
 
-    candidates = sorted(glob.glob(pattern), key=os.path.getmtime, reverse=True)
-    return [d for d in candidates if os.path.isdir(d)]
+    with open(MODEL_CATALOG_PATH, "r", encoding="utf-8") as f:
+        catalog = json.load(f)
 
+    if "models" not in catalog or not isinstance(catalog["models"], list):
+        raise ValueError("Model catalog is invalid: expected a 'models' list.")
 
-def _resolve_trained_fold(model_dir: str) -> int:
-    fold_dirs = sorted(glob.glob(os.path.join(model_dir, "CheckPoints", "Fold*")))
-    for fold_dir in fold_dirs:
-        fold_match = re.search(r"Fold(\d+)$", fold_dir)
-        if fold_match:
-            return int(fold_match.group(1))
-    return 1
+    return catalog
 
 
-def _auto_select_model(tasks: List[str]) -> Tuple[str, int]:
-    candidates = _discover_candidate_models(tasks)
-    if not candidates:
-        raise ValueError("No matching trained model was found under results/ for the selected task configuration.")
-    model_dir = candidates[0]
-    fold_number = _resolve_trained_fold(model_dir)
-    return model_dir, fold_number
+def _find_catalog_model(selected_tasks: List[str]) -> Dict[str, Any]:
+    selected_key = sorted(selected_tasks)
+    catalog = _load_model_catalog()
+
+    for model in catalog["models"]:
+        if not model.get("active", True):
+            continue
+        model_tasks = model.get("tasks", [])
+        if sorted(model_tasks) == selected_key:
+            return model
+
+    available = [", ".join(m.get("tasks", [])) for m in catalog["models"] if m.get("active", True)]
+    available_text = " | ".join(available) if available else "none"
+    raise ValueError(f"No production model found for selected task set. Available active task sets: {available_text}")
 
 CSS = """
 :root {
@@ -184,86 +168,117 @@ def _resolve_prediction_artifacts(
 def run_prediction(
     protein_id: str,
     tasks: List[str],
-) -> Tuple[str, pd.DataFrame, str, List[str]]:
+) -> Tuple[str, str, List[str], List[str], List[str]]:
     protein_id = (protein_id or "").strip()
     if not protein_id:
-        return "Please provide a protein ID (example: KI3L1_HUMAN).", pd.DataFrame(), "", []
+        return "Please provide a protein ID (example: KI3L1_HUMAN).", "", [], [], []
 
     if not tasks:
-        return "Please select at least one task.", pd.DataFrame(), "", []
+        return "Please select at least one task.", "", [], [], []
 
     try:
-        model_spec, trained_model_fold_number = _auto_select_model(tasks)
-        threshold_dist, cross_validation_fold_number, epochs, learning_rate, parsed_layers = _parse_model_spec(model_spec)
+        model = _find_catalog_model(tasks)
     except ValueError:
-        return "No matching trained model found for selected task(s). Train a model first and try again.", pd.DataFrame(), "", []
+        return "No production model is registered for the selected task set. Update src/NodeCoder/model_catalog.json.", "", [], [], []
 
-    multi_task_learning = len(tasks) > 1
+    catalog_tasks = model["tasks"]
+    threshold_dist = int(model["threshold_dist"])
+    cross_validation_fold_number = int(model["cross_validation_fold_number"])
+    trained_model_fold_number = int(model["trained_model_fold_number"])
+    epochs = int(model["epochs"])
+    learning_rate = float(model["learning_rate"])
+    parsed_layers = [int(v) for v in model["network_layers"]]
+    centrality_feature = bool(model.get("centrality_feature", True))
+    train_ratio = float(model.get("train_ratio", 0.8))
+    train_cluster_number = int(model.get("train_cluster_number", 1))
+    validation_cluster_number = int(model.get("validation_cluster_number", 1))
+
+    multi_task_learning = len(catalog_tasks) > 1
 
     try:
         from NodeCoder import predict
     except ImportError:
-        return "PyTorch/ML dependencies not installed. Install with: pip install torch torchvision torch-geometric", pd.DataFrame(), "", []
+        return "PyTorch/ML dependencies not installed. Install with: pip install torch torchvision torch-geometric", "", [], [], []
 
+    prediction_warning = ""
     with _sanitized_argv():
-        predict.main(
-            protein_ID=protein_id,
-            threshold_dist=threshold_dist,
-            trained_model_fold_number=trained_model_fold_number,
-            multi_task_learning=multi_task_learning,
-            Task=tasks,
-            centrality_feature=True,
-            cross_validation_fold_number=cross_validation_fold_number,
-            epochs=epochs,
-            performance_step=50,
-            checkpoint_step=50,
-            learning_rate=learning_rate,
-            network_layers=parsed_layers,
-            train_ratio=0.8,
-            train_cluster_number=1,
-            validation_cluster_number=1,
-        )
+        try:
+            predict.main(
+                protein_ID=protein_id,
+                threshold_dist=threshold_dist,
+                trained_model_fold_number=trained_model_fold_number,
+                multi_task_learning=multi_task_learning,
+                Task=catalog_tasks,
+                centrality_feature=centrality_feature,
+                cross_validation_fold_number=cross_validation_fold_number,
+                epochs=epochs,
+                performance_step=50,
+                checkpoint_step=50,
+                learning_rate=learning_rate,
+                network_layers=parsed_layers,
+                train_ratio=train_ratio,
+                train_cluster_number=train_cluster_number,
+                validation_cluster_number=validation_cluster_number,
+            )
+        except IndexError:
+            # Known legacy behavior: predict.main can fail after CSV prediction is written
+            # while trying to save per-protein metrics using a fold index mismatch.
+            prediction_warning = " Warning: per-protein metrics export was skipped due to legacy fold indexing."
+        except Exception:
+            raise
 
     prediction_csv, artifacts = _resolve_prediction_artifacts(
         protein_id=protein_id,
         threshold_dist=threshold_dist,
         trained_model_fold_number=trained_model_fold_number,
         multi_task_learning=multi_task_learning,
-        tasks=tasks,
-        centrality_feature=True,
+        tasks=catalog_tasks,
+        centrality_feature=centrality_feature,
         cross_validation_fold_number=cross_validation_fold_number,
         epochs=epochs,
         performance_step=50,
         checkpoint_step=50,
         learning_rate=learning_rate,
         network_layers=parsed_layers,
-        train_ratio=0.8,
-        train_cluster_number=1,
-        validation_cluster_number=1,
+        train_ratio=train_ratio,
+        train_cluster_number=train_cluster_number,
+        validation_cluster_number=validation_cluster_number,
     )
 
     if not os.path.exists(prediction_csv):
         return (
             "Prediction ran but output CSV was not found. Verify trained checkpoints and input protein availability.",
-            pd.DataFrame(),
             prediction_csv,
             artifacts,
+            [],
+            [],
         )
 
     df = pd.read_csv(prediction_csv)
+    protein_result_dir = os.path.dirname(prediction_csv)
+    png_files = sorted(glob.glob(os.path.join(protein_result_dir, "*.png")))
+    html_files = sorted(glob.glob(os.path.join(protein_result_dir, "*.html")))
+
+    if not png_files and not html_files:
+        prediction_warning += (
+            " Note: structure visualization artifacts were not found. "
+            "Prediction CSV and files were generated; if needed, configure structure-file inputs in the preprocessing/inference pipeline."
+        )
+
     summary = (
         f"Prediction finished for {protein_id}. "
-        f"Rows: {len(df)} | Tasks: {', '.join(tasks)} | "
-        f"Model: {model_spec.split('./results/')[-1]} | Fold: {trained_model_fold_number} | Output: {prediction_csv}"
+        f"Rows: {len(df)} | Tasks: {', '.join(catalog_tasks)} | "
+        f"Catalog Model: {model['id']} | Fold: {trained_model_fold_number} | Output: {prediction_csv}"
+        f"{prediction_warning}"
     )
-    return summary, df.head(300), prediction_csv, artifacts
+    return summary, prediction_csv, artifacts, png_files, html_files
 
 
 def build_app() -> gr.Blocks:
-    with gr.Blocks(title="NodeCoder - Protein ActiveSite Predictor") as app:
+    with gr.Blocks(title="NodeCoder - Protein ActiveSite Predictor", css=CSS) as app:
         gr.HTML("<div class='hero-title'>NodeCoder - Protein ActiveSite Predictor</div>")
         gr.HTML(
-            "<div class='hero-sub'>Predict functional and active residue-level sites from AlphaFold protein structures "
+            "<div class='hero-sub'>Predict functional and active sites from AlphaFold protein structures "
             "using your trained NodeCoder checkpoints.</div>"
         )
 
@@ -282,12 +297,13 @@ def build_app() -> gr.Blocks:
                 )
                 run_btn = gr.Button("Run Prediction", variant="primary")
             with gr.Column(scale=1):
-                gr.HTML("<div class='kpi-card'><b>Tips</b><br/>1. Choose one or more tasks.<br/>2. The app auto-selects the newest matching trained model from results/.<br/>3. Outputs are written under results/graph_*A.</div>")
+                gr.HTML("<div class='kpi-card'><b>Tips</b><br/>1. Choose one or more tasks.<br/>2. The app uses the locked production model catalog in src/NodeCoder/model_catalog.json.<br/>3. Outputs are written under results/graph_*A.</div>")
 
         status = gr.Textbox(label="Run Status")
-        preview = gr.Dataframe(label="Prediction Preview (first 300 rows)", wrap=True)
         output_csv = gr.Textbox(label="Prediction CSV Path")
         artifacts = gr.Files(label="Generated Artifact Files")
+        structure_images = gr.Gallery(label="Structure Visualization (PNG)", columns=2, height=420)
+        structure_html = gr.Files(label="Interactive Structure Views (HTML)")
 
         run_btn.click(
             fn=run_prediction,
@@ -295,7 +311,7 @@ def build_app() -> gr.Blocks:
                 protein_id,
                 tasks,
             ],
-            outputs=[status, preview, output_csv, artifacts],
+            outputs=[status, output_csv, artifacts, structure_images, structure_html],
         )
 
     return app
@@ -303,7 +319,7 @@ def build_app() -> gr.Blocks:
 
 def main() -> None:
     app = build_app()
-    app.launch(server_name="0.0.0.0", server_port=7860, share=False, css=CSS)
+    app.launch(server_name="0.0.0.0", server_port=7860, share=False)
 
 
 if __name__ == "__main__":
