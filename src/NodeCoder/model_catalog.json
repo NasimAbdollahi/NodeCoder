@@ -1,5 +1,6 @@
 {
   "version": "2026-08-11",
+  "_comment": "One entry per task. Set active=true when a checkpoint is available. network_layers, epochs, learning_rate must match the trained checkpoint.",
   "models": [
     {
       "id": "ligand_v1",
@@ -15,7 +16,87 @@
       "train_ratio": 0.8,
       "train_cluster_number": 1,
       "validation_cluster_number": 1,
-      "notes": "Initial production catalog entry for ligand-site inference."
+      "notes": "Production model for ligand-binding site prediction."
+    },
+    {
+      "id": "act_site_v1",
+      "active": false,
+      "tasks": ["y_ACT_SITE"],
+      "threshold_dist": 5,
+      "cross_validation_fold_number": 1,
+      "trained_model_fold_number": 1,
+      "epochs": 50,
+      "learning_rate": 0.01,
+      "network_layers": [38, 28, 18, 8],
+      "centrality_feature": true,
+      "train_ratio": 0.8,
+      "train_cluster_number": 1,
+      "validation_cluster_number": 1,
+      "notes": "Placeholder — activate when checkpoint is available."
+    },
+    {
+      "id": "nucleic_v1",
+      "active": false,
+      "tasks": ["y_Nucleic"],
+      "threshold_dist": 5,
+      "cross_validation_fold_number": 1,
+      "trained_model_fold_number": 1,
+      "epochs": 50,
+      "learning_rate": 0.01,
+      "network_layers": [38, 28, 18, 8],
+      "centrality_feature": true,
+      "train_ratio": 0.8,
+      "train_cluster_number": 1,
+      "validation_cluster_number": 1,
+      "notes": "Placeholder — activate when checkpoint is available."
+    },
+    {
+      "id": "peptide_v1",
+      "active": false,
+      "tasks": ["y_Peptide"],
+      "threshold_dist": 5,
+      "cross_validation_fold_number": 1,
+      "trained_model_fold_number": 1,
+      "epochs": 50,
+      "learning_rate": 0.01,
+      "network_layers": [38, 28, 18, 8],
+      "centrality_feature": true,
+      "train_ratio": 0.8,
+      "train_cluster_number": 1,
+      "validation_cluster_number": 1,
+      "notes": "Placeholder — activate when checkpoint is available."
+    },
+    {
+      "id": "inorganic_v1",
+      "active": false,
+      "tasks": ["y_Inorganic"],
+      "threshold_dist": 5,
+      "cross_validation_fold_number": 1,
+      "trained_model_fold_number": 1,
+      "epochs": 50,
+      "learning_rate": 0.01,
+      "network_layers": [38, 28, 18, 8],
+      "centrality_feature": true,
+      "train_ratio": 0.8,
+      "train_cluster_number": 1,
+      "validation_cluster_number": 1,
+      "notes": "Placeholder — activate when checkpoint is available."
+    },
+    {
+      "id": "cofactor_v1",
+      "active": false,
+      "tasks": ["y_Cofactor"],
+      "threshold_dist": 5,
+      "cross_validation_fold_number": 1,
+      "trained_model_fold_number": 1,
+      "epochs": 50,
+      "learning_rate": 0.01,
+      "network_layers": [38, 28, 18, 8],
+      "centrality_feature": true,
+      "train_ratio": 0.8,
+      "train_cluster_number": 1,
+      "validation_cluster_number": 1,
+      "notes": "Placeholder — activate when checkpoint is available."
     }
   ]
 }

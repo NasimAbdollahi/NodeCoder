@@ -3,7 +3,14 @@ import Bio.PDB.Chain
 import Bio.SeqUtils
 from Bio import SwissProt
 from Bio import pairwise2
-from Bio.SubsMat import MatrixInfo as MatList
+try:
+    # Biopython <= 1.80
+    from Bio.SubsMat import MatrixInfo as MatList
+    matrix = MatList.blosum62
+except ModuleNotFoundError:
+    # Biopython >= 1.81 removed Bio.SubsMat
+    from Bio.Align import substitution_matrices
+    matrix = substitution_matrices.load("BLOSUM62")
 import gzip
 from loguru import logger
 from typing import Dict
@@ -11,7 +18,6 @@ from typing import List
 from typing import Tuple
 from typing import Union
 
-matrix = MatList.blosum62
 gap_open = -10
 gap_extend = -0.5
 
